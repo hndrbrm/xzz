@@ -19,9 +19,9 @@ final class Infos implements Serializer {
     final infos = <Info>[];
 
     for (var offset = 0; offset < length; ) {
-      final info = Info.deserialize(iterator);
-      infos.add(info);
-      offset += info.serialize().length;
+      final container = InfoContainer.deserialize(iterator);
+      infos.add(container.info);
+      offset += container.serialize().length;
     }
 
     return Infos._(infos: infos);
@@ -33,7 +33,7 @@ final class Infos implements Serializer {
   List<int> serialize() {
     final body = [
       for (final info in infos)
-      ...info.serialize(),
+      ...InfoContainer(info).serialize(),
     ];
 
     return [

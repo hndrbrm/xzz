@@ -6,9 +6,8 @@ repository: https://github.com/hndrbrm/xzz
 environment:
   sdk: ^3.5.4
 
-# Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
+  dart_des: ^1.0.2
 
 dev_dependencies:
   lints: ^4.0.0
