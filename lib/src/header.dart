@@ -2,8 +2,6 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'package:collection/collection.dart';
-
 import 'shareable/int_helper.dart';
 import 'shareable/iterator_helper.dart';
 import 'shareable/list_helper.dart';
@@ -16,17 +14,23 @@ final class Header implements Serializer {
   });
 
   factory Header.deserialize(Iterator<int> iterator) {
-    final fixed1 = List<int>.filled(20, 0x00);
-    const fixed2 = 0x00000020;
-    final fixed3 = List<int>.filled(20, 0x00);
+    final fixed1 = iterator.read(20);
+    if (!listEqual(fixed1, _fixed1)) {
+      throw InvalidHeaderException();
+    }
 
-    assert(ListEquality().equals(iterator.read(20), fixed1));
-    assert(iterator.read(4).toUint32() == fixed2);
+    final fixed2 = iterator.read(4).toUint32();
+    if (fixed2 != _fixed2) {
+      throw InvalidHeaderException();
+    }
 
     final size36 = iterator.read(4).toUint32();
     final size40layer = iterator.read(4).toUint32();
 
-    assert(ListEquality().equals(iterator.read(20), fixed3));
+    final fixed3 = iterator.read(20);
+    if (!listEqual(fixed3, _fixed3)) {
+      throw InvalidHeaderException();
+    }
 
     return Header._(
       size36: size36,
@@ -37,12 +41,18 @@ final class Header implements Serializer {
   final int size36;
   final int size40layer;
 
+  static final _fixed1 = List<int>.filled(20, 0x00);
+  static const _fixed2 = 0x00000020;
+  static final _fixed3 = List<int>.filled(20, 0x00);
+
   @override
   List<int> serialize() => [
-    ...List<int>.filled(20, 0x00),
-    ...0x00000020.toUint32List(),
+    ..._fixed1,
+    ..._fixed2.toUint32List(),
     ...size36.toUint32List(),
     ...size40layer.toUint32List(),
-    ...List<int>.filled(20, 0x00),
+    ..._fixed3,
   ];
 }
+
+final class InvalidHeaderException extends FormatException {}

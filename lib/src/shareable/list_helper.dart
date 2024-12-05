@@ -5,14 +5,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-extension ListExtension<T> on List<T> {
-  List<T> cut(int start, int end) {
-    final result = sublist(start, end);
-    removeRange(start, end);
-    return result;
-  }
-}
-
 extension IntListExtension on List<int> {
   String toHex([ int offset = 0, int? length ]) {
     final buffer = StringBuffer();
