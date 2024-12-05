@@ -36,4 +36,7 @@ extension IntExtension on int {
       ];
     }
   }
+
+  List<int> toInt32List([Endian endian = Endian.little]) =>
+    (this & 0xFFFFFFFF).toUint32List(endian);
 }

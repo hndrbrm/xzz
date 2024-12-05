@@ -33,6 +33,11 @@ extension IntListExtension on List<int> {
     }
   }
 
+  int toInt32([ int offset = 0, Endian endian = Endian.little ]) {
+    final value = toUint32(offset, endian);
+    return value & 0x80000000 == 0 ? value : value - 0x100000000;
+  }
+
   int toUint16([ int offset = 0, Endian endian = Endian.little ]) {
     assert(length >= offset + 2);
 
