@@ -1,7 +1,7 @@
 name: xzz
-description: A starting point for Dart libraries or applications.
+description: Parse XZZ pcb file.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/hndrbrm/xzz
 
 environment:
   sdk: ^3.5.4
