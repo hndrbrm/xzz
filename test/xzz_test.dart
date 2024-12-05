@@ -4,8 +4,8 @@
 
 import 'dart:io';
 
-import 'package:xzz/xzz.dart';
 import 'package:test/test.dart';
+import 'package:xzz/xzz.dart';
 
 void main() {
   test('Serialize Test', () {

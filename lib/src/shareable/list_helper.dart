@@ -58,12 +58,13 @@ extension IntListExtension on List<int> {
   String toString8() => utf8.decode(this);
 }
 
-bool listEqual(List a, List b, int offsetA, int offsetB, length) {
-  assert(a.length >= offsetA + length);
-  assert(b.length >= offsetB + length);
+bool listEqual(List a, List b) {
+  if (a.length != b.length) {
+    return false;
+  }
 
-  for (var i = 0; i < length; i++) {
-    if (a[offsetA + i] != b[offsetB + i]) {
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) {
       return false;
     }
   }

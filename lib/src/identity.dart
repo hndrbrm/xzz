@@ -2,18 +2,21 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'package:collection/collection.dart';
-
 import 'shareable/iterator_helper.dart';
+import 'shareable/list_helper.dart';
 import 'shareable/serializer.dart';
 
-final class XzzId implements Serializer {
-  const XzzId._();
+final class Identity implements Serializer {
+  const Identity._();
 
-  factory XzzId.deserialize(Iterator<int> iterator) {
-    assert(ListEquality().equals(iterator.read(12), _id));
+  factory Identity.deserialize(Iterator<int> iterator) {
+    final id = iterator.read(12);
 
-    return XzzId._();
+    if (!listEqual(id, _id)) {
+      throw InvalidIdentityException();
+    }
+
+    return const Identity._();
   }
 
   /// Every xzz file need to starts with 'XZZPCB V1.0' string.
@@ -24,3 +27,5 @@ final class XzzId implements Serializer {
   @override
   List<int> serialize() => _id;
 }
+
+final class InvalidIdentityException extends FormatException {}
