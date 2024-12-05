@@ -2,38 +2,38 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'layer.dart';
+import 'image.dart';
 import 'shareable/int_helper.dart';
 import 'shareable/iterator_helper.dart';
 import 'shareable/list_helper.dart';
 import 'shareable/serializer.dart';
 
-final class Layers implements Serializer {
-  const Layers._({
-    required this.layers,
+final class Images implements Serializer {
+  const Images._({
+    required this.images,
   });
 
-  factory Layers.deserialize(Iterator<int> iterator) {
+  factory Images.deserialize(Iterator<int> iterator) {
     final length = iterator.read(4).toUint32();
 
-    final layers = <Layer>[];
+    final images = <Image>[];
 
     for (var offset = 0; offset < length; ) {
-      final layer = Layer.deserialize(iterator);
-      layers.add(layer);
-      offset += layer.serialize().length;
+      final image = Image.deserialize(iterator);
+      images.add(image);
+      offset += image.serialize().length;
     }
 
-    return Layers._(layers: layers);
+    return Images._(images: images);
   }
 
-  final List<Layer> layers;
+  final List<Image> images;
 
   @override
   List<int> serialize() {
     final body = [
-      for (final layer in layers)
-        ...layer.serialize(),
+      for (final image in images)
+      ...image.serialize(),
     ];
 
     return [

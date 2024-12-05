@@ -5,7 +5,7 @@
 import 'header.dart';
 import 'signature.dart';
 import 'infos.dart';
-import 'layers.dart';
+import 'images.dart';
 import 'nets.dart';
 import 'shareable/serializer.dart';
 
@@ -14,7 +14,7 @@ final class Xzz implements Serializer {
     required this.signature,
     required this.header,
     required this.infos,
-    required this.layers,
+    required this.images,
     required this.nets,
   });
 
@@ -22,14 +22,14 @@ final class Xzz implements Serializer {
     final signature = Signature.deserialize(iterator);
     final header = Header.deserialize(iterator);
     final infos = Infos.deserialize(iterator);
-    final layers = Layers.deserialize(iterator);
+    final images = Images.deserialize(iterator);
     final nets = Nets.deserialize(iterator);
 
     return Xzz(
       signature: signature,
       header: header,
       infos: infos,
-      layers: layers,
+      images: images,
       nets: nets,
     );
   }
@@ -37,7 +37,7 @@ final class Xzz implements Serializer {
   final Signature signature;
   final Header header;
   final Infos infos;
-  final Layers layers;
+  final Images images;
   final Nets nets;
 
   @override
@@ -45,7 +45,7 @@ final class Xzz implements Serializer {
     ...signature.serialize(),
     ...header.serialize(),
     ...infos.serialize(),
-    ...layers.serialize(),
+    ...images.serialize(),
     ...nets.serialize(),
   ];
 }
