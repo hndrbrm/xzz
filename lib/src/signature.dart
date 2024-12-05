@@ -6,26 +6,26 @@ import 'shareable/iterator_helper.dart';
 import 'shareable/list_helper.dart';
 import 'shareable/serializer.dart';
 
-final class Identity implements Serializer {
-  const Identity._();
+final class Signature implements Serializer {
+  const Signature._();
 
-  factory Identity.deserialize(Iterator<int> iterator) {
-    final id = iterator.read(12);
+  factory Signature.deserialize(Iterator<int> iterator) {
+    final signature = iterator.read(12);
 
-    if (!listEqual(id, _id)) {
-      throw InvalidIdentityException();
+    if (!listEqual(signature, _signature)) {
+      throw InvalidSignatureException();
     }
 
-    return const Identity._();
+    return const Signature._();
   }
 
   /// Every xzz file need to starts with 'XZZPCB V1.0' string.
-  static const List<int> _id = [
+  static const List<int> _signature = [
     0x58, 0x5a, 0x5a, 0x50, 0x43, 0x42, 0x20, 0x56, 0x31, 0x2e, 0x30, 0x00,
   ];
 
   @override
-  List<int> serialize() => _id;
+  List<int> serialize() => _signature;
 }
 
-final class InvalidIdentityException extends FormatException {}
+final class InvalidSignatureException extends FormatException {}

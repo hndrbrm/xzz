@@ -3,7 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import 'header.dart';
-import 'identity.dart';
+import 'signature.dart';
 import 'infos.dart';
 import 'layers.dart';
 import 'nets.dart';
@@ -11,7 +11,7 @@ import 'shareable/serializer.dart';
 
 final class Xzz implements Serializer {
   const Xzz({
-    required this.identity,
+    required this.signature,
     required this.header,
     required this.infos,
     required this.layers,
@@ -19,14 +19,14 @@ final class Xzz implements Serializer {
   });
 
   factory Xzz.deserialize(Iterator<int> iterator) {
-    final identity = Identity.deserialize(iterator);
+    final signature = Signature.deserialize(iterator);
     final header = Header.deserialize(iterator);
     final infos = Infos.deserialize(iterator);
     final layers = Layers.deserialize(iterator);
     final nets = Nets.deserialize(iterator);
 
     return Xzz(
-      identity: identity,
+      signature: signature,
       header: header,
       infos: infos,
       layers: layers,
@@ -34,7 +34,7 @@ final class Xzz implements Serializer {
     );
   }
 
-  final Identity identity;
+  final Signature signature;
   final Header header;
   final Infos infos;
   final Layers layers;
@@ -42,7 +42,7 @@ final class Xzz implements Serializer {
 
   @override
   List<int> serialize() => [
-    ...identity.serialize(),
+    ...signature.serialize(),
     ...header.serialize(),
     ...infos.serialize(),
     ...layers.serialize(),
