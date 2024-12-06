@@ -6,10 +6,10 @@ import 'dart:convert';
 
 import 'package:dart_des/dart_des.dart';
 
-import 'shareable/int_helper.dart';
-import 'shareable/iterator_helper.dart';
-import 'shareable/list_helper.dart';
-import 'shareable/serializer.dart';
+import '../../shareable/int_helper.dart';
+import '../../shareable/iterator_helper.dart';
+import '../../shareable/list_helper.dart';
+import '../../shareable/serializer.dart';
 
 final class InfoContainer implements Serializer<List<int>>{
   const InfoContainer(this.info);

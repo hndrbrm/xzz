@@ -4,10 +4,10 @@
 
 import 'dart:convert';
 
-import 'shareable/int_helper.dart';
-import 'shareable/iterator_helper.dart';
-import 'shareable/list_helper.dart';
-import 'shareable/serializer.dart';
+import '../../shareable/int_helper.dart';
+import '../../shareable/iterator_helper.dart';
+import '../../shareable/list_helper.dart';
+import '../../shareable/serializer.dart';
 
 final class Net implements Serializer {
   Net._({

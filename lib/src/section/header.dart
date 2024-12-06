@@ -2,10 +2,10 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'shareable/int_helper.dart';
-import 'shareable/iterator_helper.dart';
-import 'shareable/list_helper.dart';
-import 'shareable/serializer.dart';
+import '../shareable/int_helper.dart';
+import '../shareable/iterator_helper.dart';
+import '../shareable/list_helper.dart';
+import '../shareable/serializer.dart';
 
 final class Header implements Serializer {
   const Header._({

@@ -2,11 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'header.dart';
-import 'signature.dart';
-import 'infos.dart';
-import 'images.dart';
-import 'nets.dart';
+import 'section/header.dart';
+import 'section/image/images.dart';
+import 'section/info/infos.dart';
+import 'section/net/nets.dart';
+import 'section/signature.dart';
 import 'shareable/serializer.dart';
 
 final class Xzz implements Serializer {
