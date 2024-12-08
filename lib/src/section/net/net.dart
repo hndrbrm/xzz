@@ -9,21 +9,18 @@ import '../../bytes_helper/string_helper.dart';
 import '../../serializer.dart';
 
 final class Net implements Serializer {
-  Net._({
-    required this.index,
-    required this.name,
-  });
+  Net.deserialize(Iterator<int> iterator)
+  : this._internal(
+    length: iterator.read(4).toUint32(),
+    iterator: iterator,
+  );
 
-  factory Net.deserialize(Iterator<int> iterator) {
-    final length = iterator.read(4).toUint32();
-    final index = iterator.read(4).toUint32();
-    final name = iterator.read(length - 8).toString8();
-
-    return Net._(
-      index: index,
-      name: name,
-    );
-  }
+  Net._internal({
+    required int length,
+    required Iterator<int> iterator,
+  })
+  : index = iterator.read(4).toUint32(),
+    name = iterator.read(length - 8).toString8();
 
   final int index;
   final String name;
