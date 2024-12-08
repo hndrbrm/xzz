@@ -6,41 +6,25 @@ import 'dart:convert';
 
 import 'package:dart_des/dart_des.dart';
 
-import '../../shareable/int_helper.dart';
-import '../../shareable/iterator_helper.dart';
-import '../../shareable/list_helper.dart';
-import '../../shareable/serializer.dart';
+import '../../../shareable/int_helper.dart';
+import '../../../shareable/iterator_helper.dart';
+import '../../../shareable/list_helper.dart';
+import '../../../shareable/serializer.dart';
+import '../component/component.dart';
+import '../component/component_packet.dart';
+import '../length_packet.dart';
+import 'segment_packet.dart';
 
-final class InfoContainer implements Serializer<List<int>>{
-  const InfoContainer(this.info);
+sealed class Segment implements Serializer {
+  const Segment();
 
-  factory InfoContainer.deserialize(Iterator<int> iterator) {
-    final (type, content) = iterator.dewrapWithId();
+  int get _id;
 
-    final contentIterator = content.iterator;
-
-    final info = switch (type) {
-      ArcInfo.id => ArcInfo.deserialize(contentIterator),
-      ViaInfo.id => ViaInfo.deserialize(contentIterator),
-      Unknown1Info.id => Unknown1Info.deserialize(contentIterator),
-      LineInfo.id => LineInfo.deserialize(contentIterator),
-      TextInfo.id => TextInfo.deserialize(contentIterator),
-      PartInfo.id => PartInfo.deserialize(content),
-      PadInfo.id => PadInfo.deserialize(contentIterator),
-      _ => throw UnimplementedError('$type'),
-    };
-
-    return InfoContainer(info);
-  }
-
-  final Info info;
-
-  @override
-  List<int> serialize() => info.serialize().wrapWithId(info.type);
-}
-
-sealed class Info implements Serializer<List<int>> {
-  int get type;
+  SegmentPacket get packet =>
+    SegmentPacket(
+      id: _id,
+      content: serialize(),
+    );
 }
 
 /// Possible [layer] value:
@@ -49,8 +33,8 @@ sealed class Info implements Serializer<List<int>> {
 /// * 17      (Silkscreen)
 /// * 18 ~ 27 (Unknown)
 /// * 28      (Board edges
-final class ArcInfo implements Info {
-  ArcInfo.deserialize(Iterator<int> iterator)
+final class ArcSegment extends Segment {
+  ArcSegment.deserialize(Iterator<int> iterator)
   : layer = iterator.read(4).toUint32(),
     x = iterator.read(4).toUint32(),
     y = iterator.read(4).toUint32(),
@@ -72,7 +56,7 @@ final class ArcInfo implements Info {
   static const id = 1;
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() => [
@@ -87,8 +71,8 @@ final class ArcInfo implements Info {
   ];
 }
 
-final class ViaInfo implements Info {
-  const ViaInfo._({
+final class ViaSegment extends Segment {
+  const ViaSegment._({
     required this.x,
     required this.y,
     required this.layerARadius,
@@ -99,7 +83,7 @@ final class ViaInfo implements Info {
     required this.name,
   });
 
-  factory ViaInfo.deserialize(Iterator<int> iterator) {
+  factory ViaSegment.deserialize(Iterator<int> iterator) {
     final x = iterator.read(4).toInt32();
     final y = iterator.read(4).toInt32();
     final layerARadius = iterator.read(4).toInt32();
@@ -110,7 +94,7 @@ final class ViaInfo implements Info {
     final nameLength = iterator.read(4).toUint32();
     final name = iterator.read(nameLength).toString8();
 
-    return ViaInfo._(
+    return ViaSegment._(
       x: x,
       y: y,
       layerARadius: layerARadius,
@@ -134,7 +118,7 @@ final class ViaInfo implements Info {
   static const id = 2;
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() => [
@@ -150,8 +134,8 @@ final class ViaInfo implements Info {
   ];
 }
 
-final class Unknown1Info implements Info {
-  const Unknown1Info._({
+final class UnknownSegment extends Segment {
+  const UnknownSegment._({
     required this.unknown1,
     required this.centerX,
     required this.centerY,
@@ -163,7 +147,7 @@ final class Unknown1Info implements Info {
     required this.unknown3,
   });
 
-  factory Unknown1Info.deserialize(Iterator<int> iterator) {
+  factory UnknownSegment.deserialize(Iterator<int> iterator) {
     final unknown1 = iterator.read(4).toUint32();
     final centerX = iterator.read(4).toUint32();
     final centerY = iterator.read(4).toUint32();
@@ -174,7 +158,7 @@ final class Unknown1Info implements Info {
     final unknown2 = iterator.read(4).toUint32();
     final unknown3 = iterator.read(4).toUint32();
 
-    return Unknown1Info._(
+    return UnknownSegment._(
       unknown1: unknown1,
       centerX: centerX,
       centerY: centerY,
@@ -200,7 +184,7 @@ final class Unknown1Info implements Info {
   static const id = 3;
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() => [
@@ -216,8 +200,8 @@ final class Unknown1Info implements Info {
   ];
 }
 
-final class LineInfo implements Info {
-  LineInfo.deserialize(Iterator<int> iterator)
+final class LineSegment extends Segment {
+  LineSegment.deserialize(Iterator<int> iterator)
   : layer = iterator.read(4).toUint32(),
     x1 = iterator.read(4).toInt32(),
     y1 = iterator.read(4).toInt32(),
@@ -237,7 +221,7 @@ final class LineInfo implements Info {
   static const id = 5;
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() => [
@@ -251,8 +235,8 @@ final class LineInfo implements Info {
   ];
 }
 
-final class TextInfo implements Info {
-  const TextInfo._({
+final class TextSegment extends Segment {
+  const TextSegment._({
     required this.unknown1,
     required this.positionX,
     required this.positionY,
@@ -263,7 +247,7 @@ final class TextInfo implements Info {
     required this.text,
   });
 
-  factory TextInfo.deserialize(Iterator<int> iterator) {
+  factory TextSegment.deserialize(Iterator<int> iterator) {
     final unknown1 = iterator.read(4).toUint32();
     final positionX = iterator.read(4).toUint32();
     final positionY = iterator.read(4).toUint32();
@@ -274,7 +258,7 @@ final class TextInfo implements Info {
     final textLength = iterator.read(4).toUint32();
     final text = iterator.read(textLength).toString8();
 
-    return TextInfo._(
+    return TextSegment._(
       unknown1: unknown1,
       positionX: positionX,
       positionY: positionY,
@@ -298,7 +282,7 @@ final class TextInfo implements Info {
   static const id = 6;
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() => [
@@ -314,8 +298,8 @@ final class TextInfo implements Info {
   ];
 }
 
-final class PartInfo implements Info {
-  const PartInfo._({
+final class ComponentSegment extends Segment {
+  const ComponentSegment._({
     required this.unknown1,
     required this.description,
     required this.unknown2,
@@ -323,15 +307,14 @@ final class PartInfo implements Info {
     required this.parts,
   });
 
-  factory PartInfo.deserialize(List<int> list) {
+  factory ComponentSegment.deserialize(List<int> list) {
     final plain = _des.decrypt(list);
     final iterator1 = plain.iterator;
 
     var offset = 0;
 
-    final length = iterator1.read(4).toUint32();
-    final content = iterator1.read(length);
-    final iterator2 = content.iterator;
+    final packet = LengthPacket.deserialize(iterator1);
+    final iterator2 = packet.content.iterator;
     offset += 4;
 
     final unknown1 = iterator2.read(18);
@@ -342,15 +325,15 @@ final class PartInfo implements Info {
     final name = iterator2.read(nameLength).toString8();
     offset += 18 + 4 + descriptionLength + 31 + 4 + nameLength;
 
-    final parts = <Part>[];
+    final parts = <Component>[];
 
-    for (; offset < length; ) {
-      final container = PartContainer.deserialize(iterator2);
-      parts.add(container.part);
+    for (; offset < packet.content.length; ) {
+      final container = ComponentPacket.deserialize(iterator2);
+      parts.add(container.silk);
       offset += container.serialize().length;
     }
 
-    return PartInfo._(
+    return ComponentSegment._(
       unknown1: unknown1,
       description: description,
       unknown2: unknown2,
@@ -363,7 +346,7 @@ final class PartInfo implements Info {
   final String description;
   final List<int> unknown2;
   final String name;
-  final List<Part> parts;
+  final List<Component> parts;
 
   static const int id = 7;
 
@@ -382,11 +365,11 @@ final class PartInfo implements Info {
   }
 
   @override
-  int get type => id;
+  int get _id => id;
 
   @override
   List<int> serialize() {
-    final bytes = [
+    final bytes = LengthPacket([
       ...unknown1,
       ...description.length.toUint32List(),
       ...utf8.encode(description),
@@ -394,15 +377,15 @@ final class PartInfo implements Info {
       ...name.length.toUint32List(),
       ...utf8.encode(name),
       for (final part in parts)
-      ...PartContainer._(part).serialize(),
-    ].wrap();
+      ...part.packet.serialize(),
+    ]).serialize();
 
     return _des.encrypt(_fillWithZero(bytes));
   }
 }
 
-final class PadInfo implements Info {
-  const PadInfo._({
+final class PadSegment extends Segment {
+  const PadSegment._({
     required this.number,
     required this.originX,
     required this.originY,
@@ -423,7 +406,7 @@ final class PadInfo implements Info {
     required this.netIndex,
   });
 
-  factory PadInfo.deserialize(Iterator<int> iterator) {
+  factory PadSegment.deserialize(Iterator<int> iterator) {
     final number = iterator.read(4).toUint32();
     final originX = iterator.read(4).toUint32();
     final originY = iterator.read(4).toUint32();
@@ -444,7 +427,7 @@ final class PadInfo implements Info {
     final flag4 = iterator.read(1).first;
     final netIndex = iterator.read(4).toUint32();
 
-    return PadInfo._(
+    return PadSegment._(
       number: number,
       originX: originX,
       originY: originY,
@@ -488,7 +471,7 @@ final class PadInfo implements Info {
   static const id = 9;
 
   @override
-  int get type => number;
+  int get _id => number;
 
   @override
   List<int> serialize() => [
@@ -511,165 +494,5 @@ final class PadInfo implements Info {
     ...unknown2.toUint32List(),
     flag4,
     ...netIndex.toUint32List(),
-  ];
-}
-
-sealed class Part implements Serializer<List<int>> {
-  int get type;
-}
-
-final class UnknownPart1 implements Part {
-  const UnknownPart1.deserialize(this.raw);
-
-  final List<int> raw;
-
-  static const id = 1;
-
-  @override
-  int get type => id;
-
-  @override
-  List<int> serialize() => raw;
-}
-
-final class LinePart implements Part {
-  const LinePart.deserialize(this.raw);
-
-  final List<int> raw;
-
-  static const id = 5;
-
-  @override
-  int get type => id;
-
-  @override
-  List<int> serialize() => raw;
-}
-
-final class LabelPart implements Part {
-  const LabelPart.deserialize(this.raw);
-
-  final List<int> raw;
-
-  static const id = 6;
-
-  @override
-  int get type => id;
-
-  @override
-  List<int> serialize() => raw;
-}
-
-final class PinPart implements Part {
-  const PinPart._({
-    required this.unknown1,
-    required this.x,
-    required this.y,
-    required this.unknown2,
-    required this.name,
-    required this.unknown3,
-    required this.netIndex,
-    required this.unknown4,
-  });
-
-  factory PinPart.deserialize(Iterator<int> iterator) {
-    final unknown1 = iterator.read(4).toUint32();
-    final x = iterator.read(4).toUint32();
-    final y = iterator.read(4).toUint32();
-    final unknown2 = iterator.read(8);
-    final nameLength = iterator.read(4).toUint32();
-    final name = iterator.read(nameLength).toString8();
-    final unknown3 = iterator.read(32);
-    final netIndex = iterator.read(4).toUint32();
-    final unknown4 = iterator.read(8);
-
-    return PinPart._(
-      unknown1: unknown1,
-      x: x,
-      y: y,
-      unknown2: unknown2,
-      name: name,
-      unknown3: unknown3,
-      netIndex: netIndex,
-      unknown4: unknown4,
-    );
-  }
-
-  final int unknown1;
-  final int x;
-  final int y;
-  final List<int> unknown2;
-  final String name;
-  final List<int> unknown3;
-  final int netIndex;
-  final List<int> unknown4;
-
-  static const id = 9;
-
-  @override
-  int get type => id;
-
-  @override
-  List<int> serialize() => [
-    ...unknown1.toUint32List(),
-    ...x.toUint32List(),
-    ...y.toUint32List(),
-    ...unknown2,
-    ...name.length.toUint32List(),
-    ...utf8.encode(name),
-    ...unknown3,
-    ...netIndex.toUint32List(),
-    ...unknown4,
-  ];
-}
-
-final class PartContainer implements Serializer<List<int>> {
-  const PartContainer._(this.part);
-
-  factory PartContainer.deserialize(Iterator<int> iterator) {
-    final (type, content) = iterator.dewrapWithId();
-    final contentIterator = content.iterator;
-
-    final part = switch (type) {
-      UnknownPart1.id => UnknownPart1.deserialize(content),
-      LinePart.id => LinePart.deserialize(content),
-      LabelPart.id => LabelPart.deserialize(content),
-      PinPart.id => PinPart.deserialize(contentIterator),
-      _ => throw UnimplementedError('$type'),
-    };
-
-    return PartContainer._(part);
-  }
-
-  final Part part;
-
-  @override
-  List<int> serialize() => part.serialize().wrapWithId(part.type);
-}
-
-extension on Iterator<int> {
-  (int, List<int>) dewrapWithId() {
-    final id = read(1).first;
-    final content = dewrap();
-
-    return (id, content);
-  }
-
-  List<int> dewrap() {
-    final length = read(4).toUint32();
-    final content = read(length);
-    return content;
-  }
-}
-
-extension on List<int> {
-  List<int> wrapWithId(int id) => [
-    id,
-    ...wrap(),
-  ];
-
-  List<int> wrap() => [
-    ...length.toUint32List(),
-    ...this,
   ];
 }

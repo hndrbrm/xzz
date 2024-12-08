@@ -2,8 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'section/board/segment/segments.dart';
 import 'section/image/images.dart';
-import 'section/info/infos.dart';
 import 'section/net/nets.dart';
 import 'section/offset.dart';
 import 'section/signature.dart';
@@ -13,7 +13,7 @@ final class Xzz implements Serializer {
   const Xzz({
     required this.signature,
     required this.offset,
-    required this.infos,
+    required this.boards,
     required this.images,
     required this.nets,
   });
@@ -21,14 +21,14 @@ final class Xzz implements Serializer {
   factory Xzz.deserialize(Iterator<int> iterator) {
     final signature = Signature.deserialize(iterator);
     final offset = Offset.deserialize(iterator);
-    final infos = Infos.deserialize(iterator);
+    final boards = Segments.deserialize(iterator);
     final images = Images.deserialize(iterator);
     final nets = Nets.deserialize(iterator);
 
     return Xzz(
       signature: signature,
       offset: offset,
-      infos: infos,
+      boards: boards,
       images: images,
       nets: nets,
     );
@@ -36,7 +36,7 @@ final class Xzz implements Serializer {
 
   final Signature signature;
   final Offset offset;
-  final Infos infos;
+  final Segments boards;
   final Images images;
   final Nets nets;
 
@@ -44,7 +44,7 @@ final class Xzz implements Serializer {
   List<int> serialize() => [
     ...signature.serialize(),
     ...offset.serialize(),
-    ...infos.serialize(),
+    ...boards.serialize(),
     ...images.serialize(),
     ...nets.serialize(),
   ];
