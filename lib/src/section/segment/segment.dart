@@ -2,17 +2,17 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:dart_des/dart_des.dart';
 
-import '../../../shareable/int_helper.dart';
-import '../../../shareable/iterator_helper.dart';
-import '../../../shareable/list_helper.dart';
-import '../../../shareable/serializer.dart';
-import '../component/component.dart';
-import '../component/component_packet.dart';
-import '../length_packet.dart';
+import '../../bytes_helper/int_helper.dart';
+import '../../bytes_helper/iterator_helper.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../bytes_helper/string_helper.dart';
+import '../../serializer.dart';
+import '../packet/length_packet.dart';
+import '../packet/string_packet.dart';
+import 'component/component.dart';
+import 'component/component_packet.dart';
 import 'segment_packet.dart';
 
 sealed class Segment implements Serializer {
@@ -21,7 +21,7 @@ sealed class Segment implements Serializer {
   int get _id;
 
   SegmentPacket get packet =>
-    SegmentPacket(
+      SegmentPacket(
       id: _id,
       content: serialize(),
     );
@@ -72,39 +72,15 @@ final class ArcSegment extends Segment {
 }
 
 final class ViaSegment extends Segment {
-  const ViaSegment._({
-    required this.x,
-    required this.y,
-    required this.layerARadius,
-    required this.layerBRadius,
-    required this.layerAIndex,
-    required this.layerBIndex,
-    required this.netIndex,
-    required this.name,
-  });
-
-  factory ViaSegment.deserialize(Iterator<int> iterator) {
-    final x = iterator.read(4).toInt32();
-    final y = iterator.read(4).toInt32();
-    final layerARadius = iterator.read(4).toInt32();
-    final layerBRadius = iterator.read(4).toInt32();
-    final layerAIndex = iterator.read(4).toUint32();
-    final layerBIndex = iterator.read(4).toUint32();
-    final netIndex = iterator.read(4).toUint32();
-    final nameLength = iterator.read(4).toUint32();
-    final name = iterator.read(nameLength).toString8();
-
-    return ViaSegment._(
-      x: x,
-      y: y,
-      layerARadius: layerARadius,
-      layerBRadius: layerBRadius,
-      layerAIndex: layerAIndex,
-      layerBIndex: layerBIndex,
-      netIndex: netIndex,
-      name: name,
-    );
-  }
+  ViaSegment.deserialize(Iterator<int> iterator)
+  : x = iterator.read(4).toInt32(),
+    y = iterator.read(4).toInt32(),
+    layerARadius = iterator.read(4).toInt32(),
+    layerBRadius = iterator.read(4).toInt32(),
+    layerAIndex = iterator.read(4).toUint32(),
+    layerBIndex = iterator.read(4).toUint32(),
+    netIndex = iterator.read(4).toUint32(),
+    name = StringPacket.deserialize(iterator).string;
 
   final int x;
   final int y;
@@ -129,47 +105,21 @@ final class ViaSegment extends Segment {
     ...layerAIndex.toUint32List(),
     ...layerBIndex.toUint32List(),
     ...netIndex.toUint32List(),
-    ...name.length.toUint32List(),
-    ...utf8.encode(name),
+    ...name.toPacket().serialize(),
   ];
 }
 
 final class UnknownSegment extends Segment {
-  const UnknownSegment._({
-    required this.unknown1,
-    required this.centerX,
-    required this.centerY,
-    required this.bottomLeftX,
-    required this.bottomLeftY,
-    required this.topRightX,
-    required this.topRightY,
-    required this.unknown2,
-    required this.unknown3,
-  });
-
-  factory UnknownSegment.deserialize(Iterator<int> iterator) {
-    final unknown1 = iterator.read(4).toUint32();
-    final centerX = iterator.read(4).toUint32();
-    final centerY = iterator.read(4).toUint32();
-    final bottomLeftX = iterator.read(4).toUint32();
-    final bottomLeftY = iterator.read(4).toUint32();
-    final topRightX = iterator.read(4).toUint32();
-    final topRightY = iterator.read(4).toUint32();
-    final unknown2 = iterator.read(4).toUint32();
-    final unknown3 = iterator.read(4).toUint32();
-
-    return UnknownSegment._(
-      unknown1: unknown1,
-      centerX: centerX,
-      centerY: centerY,
-      bottomLeftX: bottomLeftX,
-      bottomLeftY: bottomLeftY,
-      topRightX: topRightX,
-      topRightY: topRightY,
-      unknown2: unknown2,
-      unknown3: unknown3,
-    );
-  }
+  UnknownSegment.deserialize(Iterator<int> iterator)
+  : unknown1 = iterator.read(4).toUint32(),
+    centerX = iterator.read(4).toUint32(),
+    centerY = iterator.read(4).toUint32(),
+    bottomLeftX = iterator.read(4).toUint32(),
+    bottomLeftY = iterator.read(4).toUint32(),
+    topRightX = iterator.read(4).toUint32(),
+    topRightY = iterator.read(4).toUint32(),
+    unknown2 = iterator.read(4).toUint32(),
+    unknown3 = iterator.read(4).toUint32();
 
   final int unknown1;
   final int centerX;
@@ -236,39 +186,15 @@ final class LineSegment extends Segment {
 }
 
 final class TextSegment extends Segment {
-  const TextSegment._({
-    required this.unknown1,
-    required this.positionX,
-    required this.positionY,
-    required this.size,
-    required this.divider,
-    required this.empty,
-    required this.one,
-    required this.text,
-  });
-
-  factory TextSegment.deserialize(Iterator<int> iterator) {
-    final unknown1 = iterator.read(4).toUint32();
-    final positionX = iterator.read(4).toUint32();
-    final positionY = iterator.read(4).toUint32();
-    final size = iterator.read(4).toUint32();
-    final divider = iterator.read(4).toUint32();
-    final empty = iterator.read(4).toUint32();
-    final one = iterator.read(2).toUint16();
-    final textLength = iterator.read(4).toUint32();
-    final text = iterator.read(textLength).toString8();
-
-    return TextSegment._(
-      unknown1: unknown1,
-      positionX: positionX,
-      positionY: positionY,
-      size: size,
-      divider: divider,
-      empty: empty,
-      one: one,
-      text: text,
-    );
-  }
+  TextSegment.deserialize(Iterator<int> iterator)
+  : unknown1 = iterator.read(4).toUint32(),
+    positionX = iterator.read(4).toUint32(),
+    positionY = iterator.read(4).toUint32(),
+    size = iterator.read(4).toUint32(),
+    divider = iterator.read(4).toUint32(),
+    empty = iterator.read(4).toUint32(),
+    one = iterator.read(2).toUint16(),
+    text = StringPacket.deserialize(iterator).string;
 
   final int unknown1;
   final int positionX;
@@ -294,7 +220,7 @@ final class TextSegment extends Segment {
     ...empty.toUint32List(),
     ...one.toUint16List(),
     ...text.length.toUint32List(),
-    ...utf8.encode(text),
+    ...text.toString8List(),
   ];
 }
 
@@ -318,18 +244,16 @@ final class ComponentSegment extends Segment {
     offset += 4;
 
     final unknown1 = iterator2.read(18);
-    final descriptionLength = iterator2.read(4).toUint32();
-    final description = iterator2.read(descriptionLength).toString8();
+    final description = StringPacket.deserialize(iterator2).string;
     final unknown2 = iterator2.read(31);
-    final nameLength = iterator2.read(4).toUint32();
-    final name = iterator2.read(nameLength).toString8();
-    offset += 18 + 4 + descriptionLength + 31 + 4 + nameLength;
+    final name = StringPacket.deserialize(iterator2).string;
+    offset += 18 + 4 + description.length + 31 + 4 + name.length;
 
-    final parts = <Component>[];
+    final components = <Component>[];
 
     for (; offset < packet.content.length; ) {
       final container = ComponentPacket.deserialize(iterator2);
-      parts.add(container.silk);
+      components.add(container.silk);
       offset += container.serialize().length;
     }
 
@@ -338,7 +262,7 @@ final class ComponentSegment extends Segment {
       description: description,
       unknown2: unknown2,
       name: name,
-      parts: parts,
+      parts: components,
     );
   }
 
@@ -369,85 +293,41 @@ final class ComponentSegment extends Segment {
 
   @override
   List<int> serialize() {
-    final bytes = LengthPacket([
+    final bytes = [
       ...unknown1,
       ...description.length.toUint32List(),
-      ...utf8.encode(description),
+      ...description.toString8List(),
       ...unknown2,
       ...name.length.toUint32List(),
-      ...utf8.encode(name),
+      ...name.toString8List(),
       for (final part in parts)
       ...part.packet.serialize(),
-    ]).serialize();
+    ].toLengthPacket().serialize();
 
     return _des.encrypt(_fillWithZero(bytes));
   }
 }
 
 final class PadSegment extends Segment {
-  const PadSegment._({
-    required this.number,
-    required this.originX,
-    required this.originY,
-    required this.innerDiameter,
-    required this.unknown1,
-    required this.name,
-    required this.outerWidth1,
-    required this.outerHeight1,
-    required this.flag1,
-    required this.outerWidth2,
-    required this.outerHeight2,
-    required this.flag2,
-    required this.outerWidth3,
-    required this.outerHeight3,
-    required this.flag3,
-    required this.unknown2,
-    required this.flag4,
-    required this.netIndex,
-  });
-
-  factory PadSegment.deserialize(Iterator<int> iterator) {
-    final number = iterator.read(4).toUint32();
-    final originX = iterator.read(4).toUint32();
-    final originY = iterator.read(4).toUint32();
-    final innerDiameter = iterator.read(4).toUint32();
-    final unknown1 = iterator.read(4).toUint32();
-    final nameLength = iterator.read(4).toUint32();
-    final name = iterator.read(nameLength).toString8();
-    final outerWidth1 = iterator.read(4).toUint32();
-    final outerHeight1 = iterator.read(4).toUint32();
-    final flag1 = iterator.read(1).first;
-    final outerWidth2 = iterator.read(4).toUint32();
-    final outerHeight2 = iterator.read(4).toUint32();
-    final flag2 = iterator.read(1).first;
-    final outerWidth3 = iterator.read(4).toUint32();
-    final outerHeight3 = iterator.read(4).toUint32();
-    final flag3 = iterator.read(1).first;
-    final unknown2 = iterator.read(4).toUint32();
-    final flag4 = iterator.read(1).first;
-    final netIndex = iterator.read(4).toUint32();
-
-    return PadSegment._(
-      number: number,
-      originX: originX,
-      originY: originY,
-      innerDiameter: innerDiameter,
-      unknown1: unknown1,
-      name: name,
-      outerWidth1: outerWidth1,
-      outerHeight1: outerHeight1,
-      flag1: flag1,
-      outerWidth2: outerWidth2,
-      outerHeight2: outerHeight2,
-      flag2: flag2,
-      outerWidth3: outerWidth3,
-      outerHeight3: outerHeight3,
-      flag3: flag3,
-      unknown2: unknown2,
-      flag4: flag4,
-      netIndex: netIndex,
-    );
-  }
+  PadSegment.deserialize(Iterator<int> iterator)
+  : number = iterator.read(4).toUint32(),
+    originX = iterator.read(4).toUint32(),
+    originY = iterator.read(4).toUint32(),
+    innerDiameter = iterator.read(4).toUint32(),
+    unknown1 = iterator.read(4).toUint32(),
+    name = StringPacket.deserialize(iterator).string,
+    outerWidth1 = iterator.read(4).toUint32(),
+    outerHeight1 = iterator.read(4).toUint32(),
+    flag1 = iterator.read(1).first,
+    outerWidth2 = iterator.read(4).toUint32(),
+    outerHeight2 = iterator.read(4).toUint32(),
+    flag2 = iterator.read(1).first,
+    outerWidth3 = iterator.read(4).toUint32(),
+    outerHeight3 = iterator.read(4).toUint32(),
+    flag3 = iterator.read(1).first,
+    unknown2 = iterator.read(4).toUint32(),
+    flag4 = iterator.read(1).first,
+    netIndex = iterator.read(4).toUint32();
 
   final int number;
   final int originX;
@@ -481,7 +361,7 @@ final class PadSegment extends Segment {
     ...innerDiameter.toUint32List(),
     ...unknown1.toUint32List(),
     ...name.length.toUint32List(),
-    ...utf8.encode(name),
+    ...name.toString8List(),
     ...outerWidth1.toUint32List(),
     ...outerHeight1.toUint32List(),
     flag1,

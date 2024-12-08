@@ -2,41 +2,20 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
-import '../../shareable/int_helper.dart';
-import '../../shareable/iterator_helper.dart';
-import '../../shareable/list_helper.dart';
-import '../../shareable/serializer.dart';
+import '../../bytes_helper/int_helper.dart';
+import '../../bytes_helper/iterator_helper.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../serializer.dart';
+import '../packet/string_packet.dart';
 
 final class Image implements Serializer {
-  const Image._({
-    required this.id,
-    required this.index,
-    required this.flag,
-    required this.sizeX,
-    required this.sizeY,
-    required this.name,
-  });
-
-  factory Image.deserialize(Iterator<int> iterator) {
-    final id = iterator.read(1).first;
-    final index = iterator.read(1).first;
-    final flag = iterator.read(1).first;
-    final sizeX = iterator.read(4).toUint32();
-    final sizeY = iterator.read(4).toUint32();
-    final length = iterator.read(4).toUint32();
-    final name = iterator.read(length).toString8();
-
-    return Image._(
-      id: id,
-      index: index,
-      flag: flag,
-      sizeX: sizeX,
-      sizeY: sizeY,
-      name: name,
-    );
-  }
+  Image.deserialize(Iterator<int> iterator)
+  : id = iterator.read(1).first,
+    index = iterator.read(1).first,
+    flag = iterator.read(1).first,
+    sizeX = iterator.read(4).toUint32(),
+    sizeY = iterator.read(4).toUint32(),
+    name = StringPacket.deserialize(iterator).string;
 
   final int id;
   final int index;
@@ -52,7 +31,6 @@ final class Image implements Serializer {
     flag,
     ...sizeX.toUint32List(),
     ...sizeY.toUint32List(),
-    ...name.length.toUint32List(),
-    ...utf8.encode(name),
+    ...name.toPacket().serialize(),
   ];
 }

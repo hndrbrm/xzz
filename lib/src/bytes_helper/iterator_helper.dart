@@ -2,7 +2,7 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-extension IteratorTypeUtility on Iterator<int> {
+extension IteratorExtension on Iterator<int> {
   List<int> read(int length) {
     assert(!length.isNegative);
 

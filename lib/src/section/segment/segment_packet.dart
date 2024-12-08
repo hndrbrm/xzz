@@ -2,7 +2,7 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../id_packet.dart';
+import '../packet/id_packet.dart';
 import 'segment.dart';
 
 final class SegmentPacket extends IdPacket {
@@ -14,7 +14,7 @@ final class SegmentPacket extends IdPacket {
   SegmentPacket.deserialize(super.iterator)
   : super.deserialize();
 
-  Segment get board => switch (id) {
+  Segment get segment => switch (id) {
     ArcSegment.id => ArcSegment.deserialize(content.iterator),
     ViaSegment.id => ViaSegment.deserialize(content.iterator),
     UnknownSegment.id => UnknownSegment.deserialize(content.iterator),

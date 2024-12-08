@@ -2,12 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
-import '../../shareable/int_helper.dart';
-import '../../shareable/iterator_helper.dart';
-import '../../shareable/list_helper.dart';
-import '../../shareable/serializer.dart';
+import '../../bytes_helper/int_helper.dart';
+import '../../bytes_helper/iterator_helper.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../bytes_helper/string_helper.dart';
+import '../../serializer.dart';
 
 final class Net implements Serializer {
   Net._({
@@ -33,6 +32,6 @@ final class Net implements Serializer {
   List<int> serialize() => [
     ...(name.length + 8).toUint32List(),
     ...index.toUint32List(),
-    ...utf8.encode(name),
+    ...name.toString8List(),
   ];
 }

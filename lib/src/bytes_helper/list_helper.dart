@@ -3,9 +3,8 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:typed_data';
 
-extension IntListExtension on List<int> {
+extension ListExtension on List<int> {
   String toHex([ int offset = 0, int? length ]) {
     final buffer = StringBuffer();
     for (var i = offset; i < (length ?? this.length); i++) {
@@ -15,41 +14,27 @@ extension IntListExtension on List<int> {
     return buffer.toString();
   }
 
-  int toUint32([ int offset = 0, Endian endian = Endian.little ]) {
+  int toUint32([ int offset = 0 ]) {
     assert(length >= offset + 4);
 
-    if (endian == Endian.little) {
-      return
-        this[offset] |
-        this[offset + 1] << 8 |
-        this[offset + 2] << 16 |
-        this[offset + 3] << 24;
-    } else {
-      return
-        this[offset] << 24 |
-        this[offset + 1] << 16 |
-        this[offset + 2] << 8 |
-        this[offset + 3];
-    }
+    return
+      this[offset] |
+      this[offset + 1] << 8 |
+      this[offset + 2] << 16 |
+      this[offset + 3] << 24;
   }
 
-  int toInt32([ int offset = 0, Endian endian = Endian.little ]) {
-    final value = toUint32(offset, endian);
+  int toInt32([ int offset = 0 ]) {
+    final value = toUint32(offset);
     return value & 0x80000000 == 0 ? value : value - 0x100000000;
   }
 
-  int toUint16([ int offset = 0, Endian endian = Endian.little ]) {
+  int toUint16([ int offset = 0 ]) {
     assert(length >= offset + 2);
 
-    if (endian == Endian.little) {
-      return
-        this[offset] |
-        this[offset + 1] << 8;
-    } else {
-      return
-        this[offset] << 8 |
-        this[offset + 1];
-    }
+    return
+      this[offset] |
+      this[offset + 1] << 8;
   }
 
   String toString8() => utf8.decode(this);

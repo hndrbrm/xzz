@@ -2,12 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
-import '../../../shareable/int_helper.dart';
-import '../../../shareable/iterator_helper.dart';
-import '../../../shareable/list_helper.dart';
-import '../../../shareable/serializer.dart';
+import '../../../bytes_helper/int_helper.dart';
+import '../../../bytes_helper/iterator_helper.dart';
+import '../../../bytes_helper/list_helper.dart';
+import '../../../serializer.dart';
+import '../../packet/string_packet.dart';
 import 'component_packet.dart';
 
 sealed class Component implements Serializer {
@@ -64,39 +63,15 @@ final class LabelComponent extends Component {
 }
 
 final class PinComponent extends Component {
-  const PinComponent._({
-    required this.unknown1,
-    required this.x,
-    required this.y,
-    required this.unknown2,
-    required this.name,
-    required this.unknown3,
-    required this.netIndex,
-    required this.unknown4,
-  });
-
-  factory PinComponent.deserialize(Iterator<int> iterator) {
-    final unknown1 = iterator.read(4).toUint32();
-    final x = iterator.read(4).toUint32();
-    final y = iterator.read(4).toUint32();
-    final unknown2 = iterator.read(8);
-    final nameLength = iterator.read(4).toUint32();
-    final name = iterator.read(nameLength).toString8();
-    final unknown3 = iterator.read(32);
-    final netIndex = iterator.read(4).toUint32();
-    final unknown4 = iterator.read(8);
-
-    return PinComponent._(
-      unknown1: unknown1,
-      x: x,
-      y: y,
-      unknown2: unknown2,
-      name: name,
-      unknown3: unknown3,
-      netIndex: netIndex,
-      unknown4: unknown4,
-    );
-  }
+  PinComponent.deserialize(Iterator<int> iterator)
+  : unknown1 = iterator.read(4).toUint32(),
+    x = iterator.read(4).toUint32(),
+    y = iterator.read(4).toUint32(),
+    unknown2 = iterator.read(8),
+    name = StringPacket.deserialize(iterator).string,
+    unknown3 = iterator.read(32),
+    netIndex = iterator.read(4).toUint32(),
+    unknown4 = iterator.read(8);
 
   final int unknown1;
   final int x;
@@ -118,8 +93,7 @@ final class PinComponent extends Component {
     ...x.toUint32List(),
     ...y.toUint32List(),
     ...unknown2,
-    ...name.length.toUint32List(),
-    ...utf8.encode(name),
+    ...name.toPacket().serialize(),
     ...unknown3,
     ...netIndex.toUint32List(),
     ...unknown4,
