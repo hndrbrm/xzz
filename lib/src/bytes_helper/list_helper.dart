@@ -14,27 +14,27 @@ extension ListExtension on List<int> {
     return buffer.toString();
   }
 
-  int toUint32([ int offset = 0 ]) {
-    assert(length >= offset + 4);
+  int toUint32() {
+    assert(length >= 4);
 
     return
-      this[offset] |
-      this[offset + 1] << 8 |
-      this[offset + 2] << 16 |
-      this[offset + 3] << 24;
+      this[0] |
+      this[1] << 8 |
+      this[2] << 16 |
+      this[3] << 24;
   }
 
-  int toInt32([ int offset = 0 ]) {
-    final value = toUint32(offset);
+  int toInt32() {
+    final value = toUint32();
     return value & 0x80000000 == 0 ? value : value - 0x100000000;
   }
 
-  int toUint16([ int offset = 0 ]) {
-    assert(length >= offset + 2);
+  int toUint16() {
+    assert(length >= 2);
 
     return
-      this[offset] |
-      this[offset + 1] << 8;
+      this[0] |
+      this[1] << 8;
   }
 
   String toString8() => utf8.decode(this);

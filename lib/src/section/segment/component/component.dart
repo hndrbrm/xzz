@@ -5,73 +5,83 @@
 import '../../../bytes_helper/int_helper.dart';
 import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
-import '../../../serializer.dart';
+import '../../../serializable.dart';
 import '../../packet/string_packet.dart';
-import 'component_packet.dart';
 
-sealed class Component implements Serializer {
+sealed class Component implements Serializable {
   const Component();
 
-  int get _id;
-
-  ComponentPacket get packet => ComponentPacket(
-    id: _id,
-    content: serialize(),
-  );
+  int get type;
 }
 
 final class UnknownComponent extends Component {
-  const UnknownComponent.deserialize(this.raw);
+  const UnknownComponent._(this.raw);
 
   final List<int> raw;
 
   static const id = 1;
 
   @override
-  int get _id => id;
+  int get type => id;
 
   @override
-  List<int> serialize() => raw;
+  List<int> toByte() => raw;
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'raw': raw,
+  };
 }
 
 final class LineComponent extends Component {
-  const LineComponent.deserialize(this.raw);
+  const LineComponent._(this.raw);
 
   final List<int> raw;
 
   static const id = 5;
 
   @override
-  int get _id => id;
+  int get type => id;
 
   @override
-  List<int> serialize() => raw;
+  List<int> toByte() => raw;
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'raw': raw,
+  };
 }
 
 final class LabelComponent extends Component {
-  const LabelComponent.deserialize(this.raw);
+  const LabelComponent._(this.raw);
 
   final List<int> raw;
 
   static const id = 6;
 
   @override
-  int get _id => id;
+  int get type => id;
 
   @override
-  List<int> serialize() => raw;
+  List<int> toByte() => raw;
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'raw': raw,
+  };
 }
 
 final class PinComponent extends Component {
-  PinComponent.deserialize(Iterator<int> iterator)
-  : unknown1 = iterator.read(4).toUint32(),
-    x = iterator.read(4).toUint32(),
-    y = iterator.read(4).toUint32(),
-    unknown2 = iterator.read(8),
-    name = StringPacket.deserialize(iterator).string,
-    unknown3 = iterator.read(32),
-    netIndex = iterator.read(4).toUint32(),
-    unknown4 = iterator.read(8);
+  const PinComponent._({
+    required this.unknown1,
+    required this.x,
+    required this.y,
+    required this.unknown2,
+    required this.name,
+    required this.unknown3,
+    required this.netIndex,
+    required this.unknown4,
+  });
 
   final int unknown1;
   final int x;
@@ -85,17 +95,65 @@ final class PinComponent extends Component {
   static const id = 9;
 
   @override
-  int get _id => id;
+  int get type => id;
 
   @override
-  List<int> serialize() => [
+  List<int> toByte() => [
     ...unknown1.toUint32List(),
     ...x.toUint32List(),
     ...y.toUint32List(),
     ...unknown2,
-    ...name.toPacket().serialize(),
+    ...name.toStringPacket().toByte(),
     ...unknown3,
     ...netIndex.toUint32List(),
     ...unknown4,
   ];
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'unknown1': unknown1,
+    'x': x,
+    'y': y,
+    'unknown2': unknown2,
+    'name': name,
+    'unknown3': unknown3,
+    'netIndex': netIndex,
+    'unknown4': unknown4,
+  };
+}
+
+extension ComponentIterator on Iterator<int> {
+  PinComponent toPinComponent() => PinComponent._(
+    unknown1: read(4).toUint32(),
+    x: read(4).toUint32(),
+    y: read(4).toUint32(),
+    unknown2: read(8),
+    name: toStringPacket().string,
+    unknown3: read(32),
+    netIndex: read(4).toUint32(),
+    unknown4: read(8),
+  );
+}
+
+extension ComponentMap on Map<String, dynamic> {
+  UnknownComponent toUnknownComponent() => UnknownComponent._(this['raw']);
+  LineComponent toLineComponent() => LineComponent._(this['raw']);
+  LabelComponent toLabelComponent() => LabelComponent._(this['raw']);
+  PinComponent toPinComponent() => PinComponent._(
+    unknown1: this['unknown1'],
+    x: this['x'],
+    y: this['y'],
+    unknown2: this['unknown2'],
+    name: this['name'],
+    unknown3: this['unknown3'],
+    netIndex: this['netIndex'],
+    unknown4: this['unknown4'],
+  );
+}
+
+extension ComponentList on List<int> {
+  UnknownComponent toUnknownComponent() => UnknownComponent._(this);
+  LineComponent toLineComponent() => LineComponent._(this);
+  LabelComponent toLabelComponent() => LabelComponent._(this);
+  PinComponent toPinComponent() => iterator.toPinComponent();
 }

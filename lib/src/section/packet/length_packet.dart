@@ -2,32 +2,40 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../byteable.dart';
 import '../../bytes_helper/int_helper.dart';
 import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
-import '../../serializer.dart';
 
-class LengthPacket implements Serializer {
+class LengthPacket implements Byteable {
   const LengthPacket(this.content);
 
-  LengthPacket.deserialize(Iterator<int> iterator)
-  : this._internal(
-    iterator.read(4).toUint32(),
-    iterator
-  );
-
-  LengthPacket._internal(int length, Iterator<int> iterator)
-  : this(iterator.read(length));
-
-  final List<int> content;
+  final Byteable content;
 
   @override
-  List<int> serialize() => [
-    ...content.length.toUint32List(),
-    ...content,
-  ];
+  List<int> toByte() {
+    final byte = content.toByte();
+
+    return [
+      ...byte.length.toUint32List(),
+      ...byte,
+    ];
+  }
 }
 
-extension LengthPacketExtension on List<int> {
+extension LengthPacketList on List<int> {
+  LengthPacket toLengthPacket() => iterator.toLengthPacket();
+}
+
+extension LengthPacketIterator on Iterator<int> {
+  LengthPacket toLengthPacket() {
+    final length = read(4).toUint32();
+    final body = read(length);
+
+    return body.toByteable().toLengthPacket();
+  }
+}
+
+extension LengthPacketByteable on Byteable {
   LengthPacket toLengthPacket() => LengthPacket(this);
 }

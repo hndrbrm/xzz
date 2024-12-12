@@ -4,28 +4,39 @@
 
 import '../bytes_helper/iterator_helper.dart';
 import '../bytes_helper/list_helper.dart';
-import '../serializer.dart';
+import '../bytes_helper/string_helper.dart';
+import '../serializable.dart';
 
-final class Signature implements Serializer {
-  const Signature._();
+final class Signature implements Serializable {
+  const Signature._(this.id);
 
-  factory Signature.deserialize(Iterator<int> iterator) {
-    final signature = iterator.read(12);
-
-    if (!listEqual(signature, _signature)) {
-      throw InvalidSignatureException();
-    }
-
-    return const Signature._();
-  }
-
-  /// Every xzz file need to starts with 'XZZPCB V1.0' string.
-  static const List<int> _signature = [
-    0x58, 0x5a, 0x5a, 0x50, 0x43, 0x42, 0x20, 0x56, 0x31, 0x2e, 0x30, 0x00,
-  ];
+  final String id;
 
   @override
-  List<int> serialize() => _signature;
+  List<int> toByte() => id.toString8List();
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'id': id,
+  };
 }
 
 final class InvalidSignatureException extends FormatException {}
+
+extension SignatureIterator on Iterator<int> {
+  static const String _id = 'XZZPCB V1.0';
+
+  Signature toSignature() {
+    final id = read(11).toString8();
+
+    if (id != _id) {
+      throw InvalidSignatureException();
+    }
+
+    return Signature._(id);
+  }
+}
+
+extension SignatureMap on Map<String, dynamic> {
+  Signature toSignature() => Signature._(this['id']);
+}

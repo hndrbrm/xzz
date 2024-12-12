@@ -2,20 +2,40 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../byteable.dart';
 import '../../bytes_helper/list_helper.dart';
 import '../../bytes_helper/string_helper.dart';
+import '../../mappable.dart';
 import 'length_packet.dart';
 
-class StringPacket extends LengthPacket {
-  StringPacket._(String string)
-  : super(string.toString8List());
+class StringPacket extends LengthPacket implements Mappable {
+  const StringPacket(super.content);
 
-  StringPacket.deserialize(super.iterator)
-  : super.deserialize();
+  String get string => content.toByte().toString8();
 
-  String get string => content.toString8();
+  @override
+  Map<String, dynamic> toMap() => {
+    'string': string,
+  };
 }
 
-extension StringPacketExtension on String {
-  StringPacket toPacket() => StringPacket._(this);
+extension StringPacketIterator on Iterator<int> {
+  StringPacket toStringPacket() {
+    final content = toLengthPacket().content;
+    return StringPacket(content);
+  }
+}
+
+extension StringPacketMap on Map<String, dynamic> {
+  StringPacket toStringPacket() {
+    final string = this['string'] as String;
+    return string.toStringPacket();
+  }
+}
+
+extension StringPacketString on String {
+  StringPacket toStringPacket() {
+    final content = toString8List().toByteable();
+    return StringPacket(content);
+  }
 }

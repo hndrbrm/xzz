@@ -2,26 +2,36 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../byteable.dart';
+import '../../bytes_helper/int_helper.dart';
 import '../../bytes_helper/iterator_helper.dart';
-import '../../serializer.dart';
 import 'length_packet.dart';
 
-class IdPacket implements Serializer {
+class IdPacket implements Byteable {
   const IdPacket({
     required this.id,
     required this.content,
   });
 
-  IdPacket.deserialize(Iterator<int> iterator)
-  : id = iterator.read(1).first,
-    content = LengthPacket.deserialize(iterator).content;
-
   final int id;
-  final List<int> content;
+  final Byteable content;
 
   @override
-  List<int> serialize() => [
-    id,
-    ...content.toLengthPacket().serialize(),
-  ];
+  List<int> toByte() {
+    final byte = content.toByte();
+
+    return [
+      id,
+      ...byte.length.toUint32List(),
+      ...byte,
+    ];
+  }
+}
+
+extension IdPacketIterator on Iterator<int> {
+  IdPacket toIdPacket() =>
+    IdPacket(
+      id: read(1).first,
+      content: toLengthPacket().content,
+    );
 }
