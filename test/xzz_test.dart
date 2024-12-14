@@ -8,11 +8,23 @@ import 'package:test/test.dart';
 import 'package:xzz/xzz.dart';
 
 void main() {
-  test('Serialize Test', () {
-    final file = File('${Directory.current.path}/test/pcb/iPhone4S boardview.pcb');
-    final content = file.readAsBytesSync();
-    final xzz = content.iterator.toXzz();
-    final bytes = xzz.toBytes();
-    expect(bytes, equals(content));
+  late List<int> bytes;
+
+  setUp(() {
+    final file = File('${Directory.current.path}/test/pcb/Switch Card slot YiDianTong.pcb');
+    bytes = file.readAsBytesSync();
+  });
+
+  test('Bytes Serialization', () {
+    final xzz = bytes.toXzz();
+    final probeBytes = xzz.toBytes();
+    expect(probeBytes, equals(bytes));
+  });
+
+  test('Json Serialization', () {
+    final xzz = bytes.toXzz();
+    final json = xzz.toJson();
+    final probeXzz = json.toXzz();
+    expect(xzz, equals(probeXzz));
   });
 }
