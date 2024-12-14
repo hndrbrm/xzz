@@ -5,7 +5,8 @@
 import '../../../bytes_helper/int_helper.dart';
 import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
-import '../../../serializable.dart';
+import '../../../serializable/jsonable.dart';
+import '../../../serializable/serializable.dart';
 import '../../packet/string_packet.dart';
 
 sealed class Component implements Serializable {
@@ -25,12 +26,18 @@ final class UnknownComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toByte() => raw;
+  List<int> toBytes() => raw;
 
   @override
-  Map<String, dynamic> toMap() => {
-    'raw': raw,
-  };
+  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is UnknownComponent &&
+    listEqual(other.raw, raw);
+
+  @override
+  int get hashCode => Object.hashAll(raw);
 }
 
 final class LineComponent extends Component {
@@ -44,12 +51,18 @@ final class LineComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toByte() => raw;
+  List<int> toBytes() => raw;
 
   @override
-  Map<String, dynamic> toMap() => {
-    'raw': raw,
-  };
+  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is LineComponent &&
+    listEqual(other.raw, raw);
+
+  @override
+  int get hashCode => Object.hashAll(raw);
 }
 
 final class LabelComponent extends Component {
@@ -63,12 +76,18 @@ final class LabelComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toByte() => raw;
+  List<int> toBytes() => raw;
 
   @override
-  Map<String, dynamic> toMap() => {
-    'raw': raw,
-  };
+  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+  
+  @override
+  bool operator ==(Object other) =>
+    other is LabelComponent &&
+    listEqual(other.raw, raw);
+
+  @override
+  int get hashCode => Object.hashAll(raw);
 }
 
 final class PinComponent extends Component {
@@ -98,19 +117,19 @@ final class PinComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...unknown1.toUint32List(),
     ...x.toUint32List(),
     ...y.toUint32List(),
     ...unknown2,
-    ...name.toStringPacket().toByte(),
+    ...name.toStringPacket().toBytes(),
     ...unknown3,
     ...netIndex.toUint32List(),
     ...unknown4,
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'unknown1': unknown1,
     'x': x,
     'y': y,
@@ -119,7 +138,31 @@ final class PinComponent extends Component {
     'unknown3': unknown3,
     'netIndex': netIndex,
     'unknown4': unknown4,
-  };
+  }.toJsonMap();
+  
+  @override
+  bool operator ==(Object other) =>
+    other is PinComponent &&
+    other.unknown1 == unknown1 &&
+    other.x == x &&
+    other.y == y &&
+    listEqual(other.unknown2, unknown2) &&
+    other.name == name &&
+    listEqual(other.unknown3, unknown3) &&
+    other.netIndex == netIndex &&
+    listEqual(other.unknown4, unknown4);
+
+  @override
+  int get hashCode => Object.hash(
+    unknown1,
+    x,
+    y,
+    Object.hashAll(unknown2),
+    name,
+    Object.hashAll(unknown3),
+    netIndex,
+    Object.hashAll(unknown4),
+  );
 }
 
 extension ComponentIterator on Iterator<int> {
@@ -135,20 +178,11 @@ extension ComponentIterator on Iterator<int> {
   );
 }
 
-extension ComponentMap on Map<String, dynamic> {
-  UnknownComponent toUnknownComponent() => UnknownComponent._(this['raw']);
-  LineComponent toLineComponent() => LineComponent._(this['raw']);
-  LabelComponent toLabelComponent() => LabelComponent._(this['raw']);
-  PinComponent toPinComponent() => PinComponent._(
-    unknown1: this['unknown1'],
-    x: this['x'],
-    y: this['y'],
-    unknown2: this['unknown2'],
-    name: this['name'],
-    unknown3: this['unknown3'],
-    netIndex: this['netIndex'],
-    unknown4: this['unknown4'],
-  );
+extension ComponentJsonMap on JsonMap {
+  UnknownComponent toUnknownComponent() => toObject().toUnknownComponent();
+  LineComponent toLineComponent() => toObject().toLineComponent();
+  LabelComponent toLabelComponent() => toObject().toLabelComponent();
+  PinComponent toPinComponent() => toObject().toPinComponent();
 }
 
 extension ComponentList on List<int> {
@@ -156,4 +190,26 @@ extension ComponentList on List<int> {
   LineComponent toLineComponent() => LineComponent._(this);
   LabelComponent toLabelComponent() => LabelComponent._(this);
   PinComponent toPinComponent() => iterator.toPinComponent();
+}
+
+extension ComponentMap on Map<String, Object?> {
+  UnknownComponent toUnknownComponent() => UnknownComponent._(
+    (this['raw']! as List<Object?>).toBytes(),
+  );
+  LineComponent toLineComponent() => LineComponent._(
+    (this['raw']! as List<Object?>).toBytes(),
+  );
+  LabelComponent toLabelComponent() => LabelComponent._(
+    (this['raw']! as List<Object?>).toBytes(),
+  );
+  PinComponent toPinComponent() => PinComponent._(
+    unknown1: this['unknown1']! as int,
+    x: this['x']! as int,
+    y: this['y']! as int,
+    unknown2: (this['unknown2']! as List<Object?>).toBytes(),
+    name: this['name']! as String,
+    unknown3: (this['unknown3']! as List<Object?>).toBytes(),
+    netIndex: this['netIndex']! as int,
+    unknown4: (this['unknown4']! as List<Object?>).toBytes(),
+  );
 }

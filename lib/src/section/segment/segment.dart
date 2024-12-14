@@ -7,7 +7,9 @@ import 'package:dart_des/dart_des.dart';
 import '../../bytes_helper/int_helper.dart';
 import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable.dart';
+import '../../serializable/byteable.dart';
+import '../../serializable/jsonable.dart';
+import '../../serializable/serializable.dart';
 import '../packet/length_packet.dart';
 import '../packet/string_packet.dart';
 import 'component/component.dart';
@@ -52,7 +54,7 @@ final class ArcSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...layer.toUint32List(),
     ...x.toUint32List(),
     ...y.toUint32List(),
@@ -64,7 +66,7 @@ final class ArcSegment extends Segment {
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'layer': layer,
     'x': x,
     'y': y,
@@ -73,7 +75,31 @@ final class ArcSegment extends Segment {
     'endAngle': endAngle,
     'scale': scale,
     'unknown': unknown,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is ArcSegment &&
+    other.layer == layer &&
+    other.x == x &&
+    other.y == y &&
+    other.r == r &&
+    other.startAngle == startAngle &&
+    other.endAngle == endAngle &&
+    other.scale == scale &&
+    other.unknown == unknown;
+
+  @override
+  int get hashCode => Object.hash(
+    layer,
+    x,
+    y,
+    r,
+    startAngle,
+    endAngle,
+    scale,
+    unknown,
+  );
 }
 
 final class ViaSegment extends Segment {
@@ -103,7 +129,7 @@ final class ViaSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...x.toInt32List(),
     ...y.toInt32List(),
     ...layerARadius.toInt32List(),
@@ -111,11 +137,11 @@ final class ViaSegment extends Segment {
     ...layerAIndex.toUint32List(),
     ...layerBIndex.toUint32List(),
     ...netIndex.toUint32List(),
-    ...name.toStringPacket().toByte(),
+    ...name.toStringPacket().toBytes(),
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'x': x,
     'y': y,
     'layerARadius': layerARadius,
@@ -124,7 +150,31 @@ final class ViaSegment extends Segment {
     'layerBIndex': layerBIndex,
     'netIndex': netIndex,
     'name': name,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is ViaSegment &&
+    other.x == x &&
+    other.y == y &&
+    other.layerARadius == layerARadius &&
+    other.layerBRadius == layerBRadius &&
+    other.layerAIndex == layerAIndex &&
+    other.layerBIndex == layerBIndex &&
+    other.netIndex == netIndex &&
+    other.name == name;
+
+  @override
+  int get hashCode => Object.hash(
+    x,
+    y,
+    layerARadius,
+    layerBRadius,
+    layerAIndex,
+    layerBIndex,
+    netIndex,
+    name,
+  );
 }
 
 final class UnknownSegment extends Segment {
@@ -156,7 +206,7 @@ final class UnknownSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...unknown1.toUint32List(),
     ...centerX.toUint32List(),
     ...centerY.toUint32List(),
@@ -169,7 +219,7 @@ final class UnknownSegment extends Segment {
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'unknown1': unknown1,
     'centerX': centerX,
     'centerY': centerY,
@@ -179,7 +229,33 @@ final class UnknownSegment extends Segment {
     'topRightY': topRightY,
     'unknown2': unknown2,
     'unknown3': unknown3,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is UnknownSegment &&
+    other.unknown1 == unknown1 &&
+    other.centerX == centerX &&
+    other.centerY == centerY &&
+    other.bottomLeftX == bottomLeftX &&
+    other.bottomLeftY == bottomLeftY &&
+    other.topRightX == topRightX &&
+    other.topRightY == topRightY &&
+    other.unknown2 == unknown2 &&
+    other.unknown3 == unknown3;
+
+  @override
+  int get hashCode => Object.hash(
+    unknown1,
+    centerX,
+    centerY,
+    bottomLeftX,
+    bottomLeftY,
+    topRightX,
+    topRightY,
+    unknown2,
+    unknown3,
+  );
 }
 
 final class LineSegment extends Segment {
@@ -207,7 +283,7 @@ final class LineSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...layer.toUint32List(),
     ...x1.toInt32List(),
     ...y1.toInt32List(),
@@ -218,7 +294,7 @@ final class LineSegment extends Segment {
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'layer': layer,
     'x1': x1,
     'y1': y1,
@@ -226,7 +302,29 @@ final class LineSegment extends Segment {
     'y2': y2,
     'scale': scale,
     'traceNetIndex': traceNetIndex,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is LineSegment &&
+    other.layer == layer &&
+    other.x1 == x1 &&
+    other.y1 == y1 &&
+    other.x2 == x2 &&
+    other.y2 == y2 &&
+    other.scale == scale &&
+    other.traceNetIndex == traceNetIndex;
+
+  @override
+  int get hashCode => Object.hash(
+    layer,
+    x1,
+    y1,
+    x2,
+    y2,
+    scale,
+    traceNetIndex,
+  );
 }
 
 final class TextSegment extends Segment {
@@ -256,7 +354,7 @@ final class TextSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...unknown1.toUint32List(),
     ...positionX.toUint32List(),
     ...positionY.toUint32List(),
@@ -264,11 +362,11 @@ final class TextSegment extends Segment {
     ...divider.toUint32List(),
     ...empty.toUint32List(),
     ...one.toUint16List(),
-    ...text.toStringPacket().toByte(),
+    ...text.toStringPacket().toBytes(),
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'unknown1': unknown1,
     'positionX': positionX,
     'positionY': positionY,
@@ -277,7 +375,31 @@ final class TextSegment extends Segment {
     'empty': empty,
     'one': one,
     'text': text,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is TextSegment &&
+    other.unknown1 == unknown1 &&
+    other.positionX == positionX &&
+    other.positionY == positionY &&
+    other.size == size &&
+    other.divider == divider &&
+    other.empty == empty &&
+    other.one == one &&
+    other.text == text;
+
+  @override
+  int get hashCode => Object.hash(
+    unknown1,
+    positionX,
+    positionY,
+    size,
+    divider,
+    empty,
+    one,
+    text,
+  );
 }
 
 final class ComponentSegment extends Segment {
@@ -315,27 +437,48 @@ final class ComponentSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toByte() {
+  List<int> toBytes() {
     final bytes = [
       ...unknown1,
-      ...description.toStringPacket().toByte(),
+      ...description.toStringPacket().toBytes(),
       ...unknown2,
-      ...name.toStringPacket().toByte(),
+      ...name.toStringPacket().toBytes(),
       for (final component in components)
-      ...component.toComponentPacket().toByte(),
-    ].toLengthPacket().toByte();
+      ...component.toComponentPacket().toBytes(),
+    ].toBytesable().toLengthPacket().toBytes();
 
     return _des.encrypt(_fillWithZero(bytes));
   }
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'unknown1': unknown1,
     'description': description,
     'unknown2': unknown2,
     'name': name,
-    'components': components.map((e) => e.toMap()),
-  };
+    'components': components
+      .map((e) => e.toComponentPacket().toJson())
+      .toList(),
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is ComponentSegment &&
+    listEqual(other.unknown1, unknown1) &&
+    other.description == description &&
+    listEqual(other.unknown2, unknown2) &&
+    other.name == name &&
+    listEqual(other.components, components);
+
+  @override
+  int get hashCode => Object.hash(
+    Object.hashAll(unknown1),
+    description,
+    Object.hashAll(unknown2),
+    name,
+    Object.hashAll(components),
+  );
+
 }
 
 final class PadSegment extends Segment {
@@ -385,13 +528,13 @@ final class PadSegment extends Segment {
   int get type => number;
 
   @override
-  List<int> toByte() => [
+  List<int> toBytes() => [
     ...number.toUint32List(),
     ...originX.toUint32List(),
     ...originY.toUint32List(),
     ...innerDiameter.toUint32List(),
     ...unknown1.toUint32List(),
-    ...name.toStringPacket().toByte(),
+    ...name.toStringPacket().toBytes(),
     ...outerWidth1.toUint32List(),
     ...outerHeight1.toUint32List(),
     flag1,
@@ -407,7 +550,7 @@ final class PadSegment extends Segment {
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'number': number,
     'originX': originX,
     'originY': originY,
@@ -426,7 +569,51 @@ final class PadSegment extends Segment {
     'unknown2': unknown2,
     'flag4': flag4,
     'netIndex': netIndex,
-  };
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is PadSegment &&
+    other.number == number &&
+    other.originX == originX &&
+    other.originY == originY &&
+    other.innerDiameter == innerDiameter &&
+    other.unknown1 == unknown1 &&
+    other.name == name &&
+    other.outerWidth1 == outerWidth1 &&
+    other.outerHeight1 == outerHeight1 &&
+    other.flag1 == flag1 &&
+    other.outerWidth2 == outerWidth2 &&
+    other.outerHeight2 == outerHeight2 &&
+    other.flag2 == flag2 &&
+    other.outerWidth3 == outerWidth3 &&
+    other.outerHeight3 == outerHeight3 &&
+    other.flag3 == flag3 &&
+    other.unknown2 == unknown2 &&
+    other.flag4 == flag4 &&
+    other.netIndex == netIndex;
+
+  @override
+  int get hashCode => Object.hash(
+    number,
+    originX,
+    originY,
+    innerDiameter,
+    unknown1,
+    name,
+    outerWidth1,
+    outerHeight1,
+    flag1,
+    outerWidth2,
+    outerHeight2,
+    flag2,
+    outerWidth3,
+    outerHeight3,
+    flag3,
+    unknown2,
+    flag4,
+    netIndex,
+  );
 }
 
 extension SegmentIterator on Iterator<int> {
@@ -502,86 +689,96 @@ extension SegmentIterator on Iterator<int> {
   );
 }
 
-extension SegmentMap on Map<String, dynamic> {
+extension SegmentJsonMap on JsonMap {
+  ArcSegment toArcSegment() => toObject().toArcSegment();
+  ViaSegment toViaSegment() => toObject().toViaSegment();
+  UnknownSegment toUnknownSegment() => toObject().toUnknownSegment();
+  LineSegment toLineSegment() => toObject().toLineSegment();
+  TextSegment toTextSegment() => toObject().toTextSegment();
+  ComponentSegment toComponentSegment() => toObject().toComponentSegment();
+  PadSegment toPadSegment() => toObject().toPadSegment();
+}
+
+extension SegmentMap on Map<String, Object?> {
   ArcSegment toArcSegment() => ArcSegment._(
-    layer: this['layer'],
-    x: this['x'],
-    y: this['y'],
-    r: this['r'],
-    startAngle: this['startAngle'],
-    endAngle: this['endAngle'],
-    scale: this['scale'],
-    unknown: this['unknown'],
+    layer: this['layer']! as int,
+    x: this['x']! as int,
+    y: this['y']! as int,
+    r: this['r']! as int,
+    startAngle: this['startAngle']! as int,
+    endAngle: this['endAngle']! as int,
+    scale: this['scale']! as int,
+    unknown: this['unknown']! as int,
   );
   ViaSegment toViaSegment() => ViaSegment._(
-    x: this['x'],
-    y: this['y'],
-    layerARadius: this['layerARadius'],
-    layerBRadius: this['layerBRadius'],
-    layerAIndex: this['layerAIndex'],
-    layerBIndex: this['layerBIndex'],
-    netIndex: this['netIndex'],
-    name: this['name'],
+    x: this['x']! as int,
+    y: this['y']! as int,
+    layerARadius: this['layerARadius']! as int,
+    layerBRadius: this['layerBRadius']! as int,
+    layerAIndex: this['layerAIndex']! as int,
+    layerBIndex: this['layerBIndex']! as int,
+    netIndex: this['netIndex']! as int,
+    name: this['name']! as String,
   );
   UnknownSegment toUnknownSegment() => UnknownSegment._(
-    unknown1: this['unknown1'],
-    centerX: this['centerX'],
-    centerY: this['centerY'],
-    bottomLeftX: this['bottomLeftX'],
-    bottomLeftY: this['bottomLeftY'],
-    topRightX: this['topRightX'],
-    topRightY: this['topRightY'],
-    unknown2: this['unknown2'],
-    unknown3: this['unknown3'],
+    unknown1: this['unknown1']! as int,
+    centerX: this['centerX']! as int,
+    centerY: this['centerY']! as int,
+    bottomLeftX: this['bottomLeftX']! as int,
+    bottomLeftY: this['bottomLeftY']! as int,
+    topRightX: this['topRightX']! as int,
+    topRightY: this['topRightY']! as int,
+    unknown2: this['unknown2']! as int,
+    unknown3: this['unknown3']! as int,
   );
   LineSegment toLineSegment() => LineSegment._(
-    layer: this['layer'],
-    x1: this['x1'],
-    y1: this['y1'],
-    x2: this['x2'],
-    y2: this['y2'],
-    scale: this['scale'],
-    traceNetIndex: this['traceNetIndex'],
+    layer: this['layer']! as int,
+    x1: this['x1']! as int,
+    y1: this['y1']! as int,
+    x2: this['x2']! as int,
+    y2: this['y2']! as int,
+    scale: this['scale']! as int,
+    traceNetIndex: this['traceNetIndex']! as int,
   );
   TextSegment toTextSegment() => TextSegment._(
-    unknown1: this['unknown1'],
-    positionX: this['positionX'],
-    positionY: this['positionY'],
-    size: this['size'],
-    divider: this['divider'],
-    empty: this['empty'],
-    one: this['one'],
-    text: this['text'],
+    unknown1: this['unknown1']! as int,
+    positionX: this['positionX']! as int,
+    positionY: this['positionY']! as int,
+    size: this['size']! as int,
+    divider: this['divider']! as int,
+    empty: this['empty']! as int,
+    one: this['one']! as int,
+    text: this['text']! as String,
   );
   ComponentSegment toComponentSegment() => ComponentSegment._(
-    unknown1: this['unknown1'],
-    description: this['description'],
-    unknown2: this['unknown2'],
-    name: this['name'],
-    components: (this['components'] as List<dynamic>)
-      .map((e) => e as Map<String, dynamic>)
-      .map((e) => e.toComponent())
+    unknown1: (this['unknown1']! as List<Object?>).toBytes(),
+    description: this['description']! as String,
+    unknown2: (this['unknown2']! as List<Object?>).toBytes(),
+    name: this['name']! as String,
+    components: (this['components']! as List<Object?>)
+      .map((e) => e! as Map<String, Object?>)
+      .map((e) => e.toComponentPacket().toComponent())
       .toList()
   );
   PadSegment toPadSegment() => PadSegment._(
-    number: this['number'],
-    originX: this['originX'],
-    originY: this['originY'],
-    innerDiameter: this['innerDiameter'],
-    unknown1: this['unknown1'],
-    name: this['name'],
-    outerWidth1: this['outerWidth1'],
-    outerHeight1: this['outerHeight1'],
-    flag1: this['flag1'],
-    outerWidth2: this['outerWidth2'],
-    outerHeight2: this['outerHeight2'],
-    flag2: this['flag2'],
-    outerWidth3: this['outerWidth3'],
-    outerHeight3: this['outerHeight3'],
-    flag3: this['flag3'],
-    unknown2: this['unknown2'],
-    flag4: this['flag4'],
-    netIndex: this['netIndex'],
+    number: this['number']! as int,
+    originX: this['originX']! as int,
+    originY: this['originY']! as int,
+    innerDiameter: this['innerDiameter']! as int,
+    unknown1: this['unknown1']! as int,
+    name: this['name']! as String,
+    outerWidth1: this['outerWidth1']! as int,
+    outerHeight1: this['outerHeight1']! as int,
+    flag1: this['flag1']! as int,
+    outerWidth2: this['outerWidth2']! as int,
+    outerHeight2: this['outerHeight2']! as int,
+    flag2: this['flag2']! as int,
+    outerWidth3: this['outerWidth3']! as int,
+    outerHeight3: this['outerHeight3']! as int,
+    flag3: this['flag3']! as int,
+    unknown2: this['unknown2']! as int,
+    flag4: this['flag4']! as int,
+    netIndex: this['netIndex']! as int,
   );
 }
 
@@ -592,7 +789,7 @@ extension SegmentList on List<int> {
 
     var offset = 0;
 
-    final packet = iterator1.toLengthPacket().content.toByte();
+    final packet = iterator1.toLengthPacket().content.toBytes();
     final iterator2 = packet.iterator;
     offset += 4;
 
@@ -607,7 +804,7 @@ extension SegmentList on List<int> {
     for (; offset < packet.length; ) {
       final packet = iterator2.toComponentPacket();
       components.add(packet.toComponent());
-      offset += packet.toByte().length;
+      offset += packet.toBytes().length;
     }
 
     return ComponentSegment._(

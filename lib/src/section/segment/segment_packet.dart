@@ -2,9 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../byteable.dart';
-import '../../serializable.dart';
-import '../packet/byteable_packet.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../serializable/byteable.dart';
+import '../../serializable/jsonable.dart';
+import '../../serializable/serializable.dart';
+import '../packet/bytesable_packet.dart';
 import '../packet/id_packet.dart';
 import 'segment.dart';
 
@@ -15,21 +17,33 @@ final class SegmentPacket extends IdPacket implements Serializable {
   });
 
   Segment toSegment() => switch (id) {
-    ArcSegment.id => content.toByte().iterator.toArcSegment(),
-    ViaSegment.id => content.toByte().iterator.toViaSegment(),
-    UnknownSegment.id => content.toByte().iterator.toUnknownSegment(),
-    LineSegment.id => content.toByte().iterator.toLineSegment(),
-    TextSegment.id => content.toByte().iterator.toTextSegment(),
-    ComponentSegment.id => content.toByte().toComponentSegment(),
-    PadSegment.id => content.toByte().iterator.toPadSegment(),
+    ArcSegment.id => content.toBytes().iterator.toArcSegment(),
+    ViaSegment.id => content.toBytes().iterator.toViaSegment(),
+    UnknownSegment.id => content.toBytes().iterator.toUnknownSegment(),
+    LineSegment.id => content.toBytes().iterator.toLineSegment(),
+    TextSegment.id => content.toBytes().iterator.toTextSegment(),
+    ComponentSegment.id => content.toBytes().toComponentSegment(),
+    PadSegment.id => content.toBytes().iterator.toPadSegment(),
     _ => throw UnknownSegmentException(id),
   };
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'id': id,
-    'segment': toSegment().toMap(),
-  };
+    'segment': toSegment().toJson(),
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is SegmentPacket &&
+    other.id == id &&
+    listEqual(other.content.toBytes(), content.toBytes());
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    Object.hashAll(content.toBytes()),
+  );
 }
 
 final class UnknownSegmentException implements Exception {
@@ -51,27 +65,20 @@ extension SegmentIterator on Iterator<int> {
     );
   }
 
-  ByteablePacket<SegmentPacket> toSegments() => toByteablePacket(
+  BytesablePacket<SegmentPacket> toSegments() => toByteablePacket(
     (e) => e.toSegmentPacket()
   );
 }
 
-extension SegmentPacketMap on Map<String, dynamic> {
+extension SegmentPacketJsonMap on JsonMap {
+  SegmentPacket toSegmentPacket() => toObject().toSegmentPacket();
+}
+
+extension SegmentPacketMap on Map<String, Object?> {
   SegmentPacket toSegmentPacket() {
-    final id = this['id'];
-    final segment = this['segment'] as Map<String, dynamic>;
-
-    return SegmentPacket._(
-      id: id,
-      content: segment.toSegment(),
-    );
-  }
-
-  Segment toSegment() {
-    final id = this['id'];
-    final segment = this['segment'] as Map<String, dynamic>;
-
-    return switch (id) {
+    final id = this['id']! as int;
+    final segment = this['segment']! as Map<String, Object?>;
+    final content = switch (id) {
       ArcSegment.id => segment.toArcSegment(),
       ViaSegment.id => segment.toViaSegment(),
       UnknownSegment.id => segment.toUnknownSegment(),
@@ -82,12 +89,16 @@ extension SegmentPacketMap on Map<String, dynamic> {
       _ => throw UnknownSegmentException(id),
     };
 
+    return SegmentPacket._(
+      id: id,
+      content: content,
+    );
   }
 }
 
 extension SegmentPacketSegment on Segment {
   SegmentPacket toSegmentPacket() => SegmentPacket._(
     id: type,
-    content: toByte().toByteable(),
+    content: toBytes().toBytesable(),
   );
 }

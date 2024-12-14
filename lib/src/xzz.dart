@@ -2,13 +2,13 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'section/image.dart';
-import 'section/net.dart';
+import 'section/image/images.dart';
+import 'section/net/nets.dart';
 import 'section/offset.dart';
-import 'section/packet/byteable_packet.dart';
-import 'section/segment/segment_packet.dart';
+import 'section/segment/segments.dart';
 import 'section/signature.dart';
-import 'serializable.dart';
+import 'serializable/jsonable.dart';
+import 'serializable/serializable.dart';
 
 final class Xzz implements Serializable {
   const Xzz._({
@@ -21,27 +21,45 @@ final class Xzz implements Serializable {
 
   final Signature signature;
   final Offset offset;
-  final ByteablePacket<SegmentPacket> segments;
-  final ByteablePacket<Image> images;
-  final ByteablePacket<Net> nets;
+  final Segments segments;
+  final Images images;
+  final Nets nets;
 
   @override
-  List<int> toByte() => [
-    ...signature.toByte(),
-    ...offset.toByte(),
-    ...segments.toByte(),
-    ...images.toByte(),
-    ...nets.toByte(),
+  List<int> toBytes() => [
+    ...signature.toBytes(),
+    ...offset.toBytes(),
+    ...segments.toBytes(),
+    ...images.toBytes(),
+    ...nets.toBytes(),
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
-    'signature': signature.toMap(),
-    'offset': offset.toMap(),
-    'segments': segments.toMap(),
-    'images': images.toMap(),
-    'nets': nets.toMap(),
-  };
+  JsonMap toJson() => {
+    'signature': signature.toJson(),
+    'offset': offset.toJson(),
+    'segments': segments.toJson(),
+    'images': images.toJson(),
+    'nets': nets.toJson(),
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is Xzz &&
+    other.signature == signature &&
+    other.offset == offset &&
+    other.segments == segments &&
+    other.images == images &&
+    other.nets == nets;
+
+  @override
+  int get hashCode => Object.hash(
+    signature,
+    offset,
+    segments,
+    images,
+    nets,
+  );
 }
 
 extension XzzIterator on Iterator<int> {
@@ -50,16 +68,24 @@ extension XzzIterator on Iterator<int> {
     offset: toOffset(),
     segments: toSegments(),
     images: toImages(),
-    nets: toNets()
+    nets: toNets(),
   );
 }
 
-extension XzzMap on Map<String, dynamic> {
+extension XzzJsonMap on JsonMap {
+  Xzz toXzz() => toObject().toXzz();
+}
+
+extension XzzList on List<int> {
+  Xzz toXzz() => iterator.toXzz();
+}
+
+extension XzzMap on Map<String, Object?> {
   Xzz toXzz() => Xzz._(
-    signature: this['signature'],
-    offset: this['offset'],
-    segments: this['segments'],
-    images: this['images'],
-    nets: this['nets'],
+    signature: (this['signature']! as Map<String, Object?>).toSignature(),
+    offset: (this['offset']! as Map<String, Object?>).toOffset(),
+    segments: (this['segments']! as List<Object?>).toSegments(),
+    images: (this['images']! as List<Object?>).toImages(),
+    nets: (this['nets']! as List<Object?>).toNets(),
   );
 }

@@ -12,7 +12,7 @@ void main() {
     final file = File('${Directory.current.path}/test/pcb/iPhone4S boardview.pcb');
     final content = file.readAsBytesSync();
     final xzz = content.iterator.toXzz();
-    final bytes = xzz.toByte();
+    final bytes = xzz.toBytes();
     expect(bytes, equals(content));
   });
 }

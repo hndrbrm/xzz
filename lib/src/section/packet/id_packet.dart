@@ -2,23 +2,24 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../byteable.dart';
 import '../../bytes_helper/int_helper.dart';
 import '../../bytes_helper/iterator_helper.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../serializable/byteable.dart';
 import 'length_packet.dart';
 
-class IdPacket implements Byteable {
+class IdPacket implements Bytesable {
   const IdPacket({
     required this.id,
     required this.content,
   });
 
   final int id;
-  final Byteable content;
+  final Bytesable content;
 
   @override
-  List<int> toByte() {
-    final byte = content.toByte();
+  List<int> toBytes() {
+    final byte = content.toBytes();
 
     return [
       id,
@@ -26,6 +27,18 @@ class IdPacket implements Byteable {
       ...byte,
     ];
   }
+
+  @override
+  bool operator ==(Object other) =>
+    other is IdPacket &&
+    other.id == id &&
+    listEqual(other.content.toBytes(), content.toBytes());
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    Object.hashAll(content.toBytes()),
+  );
 }
 
 extension IdPacketIterator on Iterator<int> {

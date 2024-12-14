@@ -5,7 +5,8 @@
 import '../bytes_helper/iterator_helper.dart';
 import '../bytes_helper/list_helper.dart';
 import '../bytes_helper/string_helper.dart';
-import '../serializable.dart';
+import '../serializable/jsonable.dart';
+import '../serializable/serializable.dart';
 
 final class Signature implements Serializable {
   const Signature._(this.id);
@@ -13,12 +14,18 @@ final class Signature implements Serializable {
   final String id;
 
   @override
-  List<int> toByte() => id.toString8List();
+  List<int> toBytes() => id.toString8List();
 
   @override
-  Map<String, dynamic> toMap() => {
-    'id': id,
-  };
+  JsonMap toJson() => { 'id': id }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is Signature &&
+    other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 final class InvalidSignatureException extends FormatException {}
@@ -37,6 +44,10 @@ extension SignatureIterator on Iterator<int> {
   }
 }
 
-extension SignatureMap on Map<String, dynamic> {
-  Signature toSignature() => Signature._(this['id']);
+extension SignatureJsonMap on JsonMap {
+  Signature toSignature() => toObject().toSignature();
+}
+
+extension SignatureMap on Map<String, Object?> {
+  Signature toSignature() => Signature._(this['id']! as String);
 }

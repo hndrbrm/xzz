@@ -2,21 +2,19 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../byteable.dart';
 import '../../bytes_helper/list_helper.dart';
 import '../../bytes_helper/string_helper.dart';
-import '../../mappable.dart';
+import '../../serializable/byteable.dart';
+import '../../serializable/jsonable.dart';
 import 'length_packet.dart';
 
-class StringPacket extends LengthPacket implements Mappable {
+class StringPacket extends LengthPacket implements Jsonable {
   const StringPacket(super.content);
 
-  String get string => content.toByte().toString8();
+  String get string => content.toBytes().toString8();
 
   @override
-  Map<String, dynamic> toMap() => {
-    'string': string,
-  };
+  JsonMap toJson() => { 'string': string }.toJsonMap();
 }
 
 extension StringPacketIterator on Iterator<int> {
@@ -35,7 +33,7 @@ extension StringPacketMap on Map<String, dynamic> {
 
 extension StringPacketString on String {
   StringPacket toStringPacket() {
-    final content = toString8List().toByteable();
+    final content = toString8List().toBytesable();
     return StringPacket(content);
   }
 }

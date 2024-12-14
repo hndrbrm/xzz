@@ -3,7 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import 'byteable.dart';
-import 'mappable.dart';
+import 'jsonable.dart';
 
-abstract class Serializable implements Byteable, Mappable {
+abstract class Serializable implements Bytesable, Jsonable {
 }

@@ -2,30 +2,43 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../../byteable.dart';
-import '../../../mappable.dart';
+import '../../../bytes_helper/list_helper.dart';
+import '../../../serializable/byteable.dart';
+import '../../../serializable/jsonable.dart';
 import '../../packet/id_packet.dart';
 import 'component.dart';
 
-final class ComponentPacket extends IdPacket implements Mappable {
-  const ComponentPacket._({
+final class ComponentPacket extends IdPacket implements Jsonable {
+  const ComponentPacket({
     required super.id,
     required super.content,
   });
 
   Component toComponent() => switch (id) {
-    UnknownComponent.id => content.toByte().toUnknownComponent(),
-    LineComponent.id => content.toByte().toLineComponent(),
-    LabelComponent.id => content.toByte().toLabelComponent(),
-    PinComponent.id => content.toByte().toPinComponent(),
+    UnknownComponent.id => content.toBytes().toUnknownComponent(),
+    LineComponent.id => content.toBytes().toLineComponent(),
+    LabelComponent.id => content.toBytes().toLabelComponent(),
+    PinComponent.id => content.toBytes().toPinComponent(),
     _ => throw UnknownComponentException(id),
   };
 
   @override
-  Map<String, dynamic> toMap() => {
+  JsonMap toJson() => {
     'id': id,
-    'component': toComponent().toMap(),
-  };
+    'component': toComponent().toJson(),
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is ComponentPacket &&
+    other.id == id &&
+    listEqual(other.content.toBytes(), content.toBytes());
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    Object.hashAll(content.toBytes()),
+  );
 }
 
 final class UnknownComponentException implements Exception {
@@ -41,19 +54,23 @@ extension ComponentPacketIterator on Iterator<int> {
   ComponentPacket toComponentPacket() {
     final packet = toIdPacket();
 
-    return ComponentPacket._(
+    return ComponentPacket(
       id: packet.id,
       content: packet.content,
     );
   }
 }
 
-extension ComponentPacketMap on Map<String, dynamic> {
+extension ComponentPacketJsonMap on JsonMap {
+  ComponentPacket toComponentPacket() => toObject().toComponentPacket();
+}
+
+extension ComponentPacketMap on Map<String, Object?> {
   ComponentPacket toComponentPacket() => toComponent().toComponentPacket();
 
   Component toComponent() {
-    final id = this['id'];
-    final component = this['component'] as Map<String, dynamic>;
+    final id = this['id']! as int;
+    final component = this['component']! as Map<String, Object?>;
 
     return switch (id) {
       UnknownComponent.id => component.toUnknownComponent(),
@@ -66,8 +83,8 @@ extension ComponentPacketMap on Map<String, dynamic> {
 }
 
 extension ComponentPacketComponent on Component {
-  ComponentPacket toComponentPacket() => ComponentPacket._(
+  ComponentPacket toComponentPacket() => ComponentPacket(
     id: type,
-    content: toByte().toByteable(),
+    content: toBytes().toBytesable(),
   );
 }
