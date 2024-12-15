@@ -74,7 +74,7 @@ extension ImageIterator on Iterator<int> {
     flag: read(1).first,
     sizeX: read(4).toUint32(),
     sizeY: read(4).toUint32(),
-    name: toStringPacket().string,
+    name: toStringPacket()!.string,
   );
 }
 

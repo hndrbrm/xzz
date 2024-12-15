@@ -34,10 +34,20 @@ final class SegmentPacket extends IdPacket implements Serializable {
   }.toJsonMap();
 
   @override
-  bool operator ==(Object other) =>
-    other is SegmentPacket &&
+  bool operator ==(Object other) {
+    if (id == 2) {
+      print(other is SegmentPacket);
+      final a = other as SegmentPacket;
+      print('id: $id ${a.id == id}');
+      print('content: ${listEqual(a.content.toBytes(), content.toBytes())}');
+      print(toBytes().toHex());
+      print(a.toBytes().toHex());
+    }
+
+    return other is SegmentPacket &&
     other.id == id &&
     listEqual(other.content.toBytes(), content.toBytes());
+  }
 
   @override
   int get hashCode => Object.hash(
@@ -59,10 +69,16 @@ extension SegmentIterator on Iterator<int> {
   SegmentPacket toSegmentPacket() {
     final packet = toIdPacket();
 
-    return SegmentPacket._(
+    final a = SegmentPacket._(
       id: packet.id,
       content: packet.content,
     );
+
+    if (packet.id == 2) {
+      print('origin: ${a.toBytes().toHex()}');
+    }
+
+    return a;
   }
 
   BytesablePacket<SegmentPacket> toSegments() => toByteablePacket(
@@ -89,10 +105,15 @@ extension SegmentPacketMap on Map<String, Object?> {
       _ => throw UnknownSegmentException(id),
     };
 
-    return SegmentPacket._(
+    final a = SegmentPacket._(
       id: id,
       content: content,
     );
+    if (id == 2) {
+      print('a: ${a.toBytes().toHex()}');
+    }
+
+    return a;
   }
 }
 

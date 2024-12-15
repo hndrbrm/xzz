@@ -2,7 +2,7 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
+import 'package:fast_gbk/fast_gbk.dart';
 
 extension ListExtension on List<int> {
   String toHex([ int offset = 0, int? length ]) {
@@ -37,7 +37,7 @@ extension ListExtension on List<int> {
       this[1] << 8;
   }
 
-  String toString8() => utf8.decode(this);
+  String toString8() => gbk.decode(this);
 }
 
 bool listEqual(List a, List b) {

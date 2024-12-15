@@ -18,9 +18,9 @@ class StringPacket extends LengthPacket implements Jsonable {
 }
 
 extension StringPacketIterator on Iterator<int> {
-  StringPacket toStringPacket() {
-    final content = toLengthPacket().content;
-    return StringPacket(content);
+  StringPacket? toStringPacket() {
+    final content = toLengthPacket()?.content;
+    return content == null ? null : StringPacket(content);
   }
 }
 

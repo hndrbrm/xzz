@@ -2,8 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
+import 'package:fast_gbk/fast_gbk.dart';
 
 extension StringExtension on String {
-  List<int> toString8List() => utf8.encode(this);
+  List<int> toString8List() => gbk.encode(this);
 }
