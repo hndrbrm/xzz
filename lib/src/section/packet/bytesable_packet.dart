@@ -34,7 +34,7 @@ implements Serializable
 
 extension BytesableIterator on Iterator<int> {
   BytesablePacket<T> toByteablePacket<T extends Serializable>(T Function(Iterator<int> iterator) debyte) {
-    final packet = toLengthPacket().content.toBytes();
+    final packet = toLengthPacket()!.content.toBytes();
     final packetIterator = packet.iterator;
 
     final whole = <T>[];

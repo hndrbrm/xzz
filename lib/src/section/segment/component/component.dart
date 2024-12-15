@@ -171,7 +171,7 @@ extension ComponentIterator on Iterator<int> {
     x: read(4).toUint32(),
     y: read(4).toUint32(),
     unknown2: read(8),
-    name: toStringPacket().string,
+    name: toStringPacket()!.string,
     unknown3: read(32),
     netIndex: read(4).toUint32(),
     unknown4: read(8),

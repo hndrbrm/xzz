@@ -45,6 +45,6 @@ extension IdPacketIterator on Iterator<int> {
   IdPacket toIdPacket() =>
     IdPacket(
       id: read(1).first,
-      content: toLengthPacket().content,
+      content: toLengthPacket()!.content,
     );
 }

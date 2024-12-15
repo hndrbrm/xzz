@@ -23,13 +23,14 @@ class LengthPacket implements Bytesable {
   }
 }
 
-extension LengthPacketList on List<int> {
-  LengthPacket toLengthPacket() => iterator.toLengthPacket();
-}
-
 extension LengthPacketIterator on Iterator<int> {
-  LengthPacket toLengthPacket() {
-    final length = read(4).toUint32();
+  LengthPacket? toLengthPacket() {
+    final probe = read(4);
+    if (probe.isEmpty) {
+      return null;
+    }
+
+    final length = probe.toUint32();
     final body = read(length);
 
     return body.toBytesable().toLengthPacket();

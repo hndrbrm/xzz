@@ -111,7 +111,7 @@ final class ViaSegment extends Segment {
     required this.layerAIndex,
     required this.layerBIndex,
     required this.netIndex,
-    required this.name,
+    this.name,
   });
   
   final int x;
@@ -121,7 +121,7 @@ final class ViaSegment extends Segment {
   final int layerAIndex;
   final int layerBIndex;
   final int netIndex;
-  final String name;
+  final String? name;
 
   static const id = 2;
 
@@ -137,7 +137,8 @@ final class ViaSegment extends Segment {
     ...layerAIndex.toUint32List(),
     ...layerBIndex.toUint32List(),
     ...netIndex.toUint32List(),
-    ...name.toStringPacket().toBytes(),
+    if (name != null)
+    ...name!.toStringPacket().toBytes(),
   ];
 
   @override
@@ -149,6 +150,7 @@ final class ViaSegment extends Segment {
     'layerAIndex': layerAIndex,
     'layerBIndex': layerBIndex,
     'netIndex': netIndex,
+    if (name != null)
     'name': name,
   }.toJsonMap();
 
@@ -635,7 +637,7 @@ extension SegmentIterator on Iterator<int> {
     layerAIndex: read(4).toUint32(),
     layerBIndex: read(4).toUint32(),
     netIndex: read(4).toUint32(),
-    name: toStringPacket().string,
+    name: toStringPacket()?.string,
   );
   UnknownSegment toUnknownSegment() => UnknownSegment._(
     unknown1: read(4).toUint32(),
@@ -665,7 +667,7 @@ extension SegmentIterator on Iterator<int> {
     divider: read(4).toUint32(),
     empty: read(4).toUint32(),
     one: read(2).toUint16(),
-    text: toStringPacket().string,
+    text: toStringPacket()!.string,
   );
   PadSegment toPadSegment() => PadSegment._(
     number: read(4).toUint32(),
@@ -673,7 +675,7 @@ extension SegmentIterator on Iterator<int> {
     originY: read(4).toUint32(),
     innerDiameter: read(4).toUint32(),
     unknown1: read(4).toUint32(),
-    name: toStringPacket().string,
+    name: toStringPacket()!.string,
     outerWidth1: read(4).toUint32(),
     outerHeight1: read(4).toUint32(),
     flag1: read(1).first,
@@ -718,7 +720,7 @@ extension SegmentMap on Map<String, Object?> {
     layerAIndex: this['layerAIndex']! as int,
     layerBIndex: this['layerBIndex']! as int,
     netIndex: this['netIndex']! as int,
-    name: this['name']! as String,
+    name: this['name'] as String?,
   );
   UnknownSegment toUnknownSegment() => UnknownSegment._(
     unknown1: this['unknown1']! as int,
@@ -789,14 +791,14 @@ extension SegmentList on List<int> {
 
     var offset = 0;
 
-    final packet = iterator1.toLengthPacket().content.toBytes();
+    final packet = iterator1.toLengthPacket()!.content.toBytes();
     final iterator2 = packet.iterator;
     offset += 4;
 
     final unknown1 = iterator2.read(18);
-    final description = iterator2.toStringPacket().string;
+    final description = iterator2.toStringPacket()!.string;
     final unknown2 = iterator2.read(31);
-    final name = iterator2.toStringPacket().string;
+    final name = iterator2.toStringPacket()!.string;
     offset += 18 + 4 + description.length + 31 + 4 + name.length;
 
     final components = <Component>[];
