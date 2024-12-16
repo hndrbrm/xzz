@@ -6,6 +6,7 @@ import 'section/image/images.dart';
 import 'section/net/nets.dart';
 import 'section/offset.dart';
 import 'section/segment/segments.dart';
+import 'section/separator.dart';
 import 'section/signature.dart';
 import 'serializable/jsonable.dart';
 import 'serializable/serializable.dart';
@@ -17,6 +18,7 @@ final class Xzz implements Serializable {
     required this.segments,
     required this.images,
     required this.nets,
+    this.separator,
   });
 
   final Signature signature;
@@ -24,6 +26,7 @@ final class Xzz implements Serializable {
   final Segments segments;
   final Images images;
   final Nets nets;
+  final Separator? separator;
 
   @override
   List<int> toBytes() => [
@@ -32,6 +35,8 @@ final class Xzz implements Serializable {
     ...segments.toBytes(),
     ...images.toBytes(),
     ...nets.toBytes(),
+    if (separator != null)
+    ...separator!.toBytes(),
   ];
 
   @override
@@ -41,6 +46,8 @@ final class Xzz implements Serializable {
     'segments': segments.toJson(),
     'images': images.toJson(),
     'nets': nets.toJson(),
+    if (separator != null)
+    'separator': separator.toJson(),
   }.toJsonMap();
 
   @override
@@ -50,7 +57,8 @@ final class Xzz implements Serializable {
     other.offset == offset &&
     other.segments == segments &&
     other.images == images &&
-    other.nets == nets;
+    other.nets == nets &&
+    other.separator == separator;
 
   @override
   int get hashCode => Object.hash(
@@ -59,16 +67,7 @@ final class Xzz implements Serializable {
     segments,
     images,
     nets,
-  );
-}
-
-extension XzzIterator on Iterator<int> {
-  Xzz toXzz() => Xzz._(
-    signature: toSignature(),
-    offset: toOffset(),
-    segments: toSegments(),
-    images: toImages(),
-    nets: toNets(),
+    separator,
   );
 }
 
@@ -77,7 +76,26 @@ extension XzzJsonMap on JsonMap {
 }
 
 extension XzzList on List<int> {
-  Xzz toXzz() => iterator.toXzz();
+  Xzz toXzz() {
+    final position = findSeparator();
+
+    final iterator = this.iterator;
+    final signature = iterator.toSignature();
+    final offset = iterator.toOffset();
+    final segments = iterator.toSegments();
+    final images = iterator.toImages();
+    final nets = iterator.toNets();
+    final separator = (position == -1) ? null : iterator.toSeparator();
+
+    return Xzz._(
+      signature: signature,
+      offset: offset,
+      segments: segments,
+      images: images,
+      nets: nets,
+      separator: separator,
+    );
+  }
 }
 
 extension XzzMap on Map<String, Object?> {
@@ -87,5 +105,6 @@ extension XzzMap on Map<String, Object?> {
     segments: (this['segments']! as List<Object?>).toSegments(),
     images: (this['images']! as List<Object?>).toImages(),
     nets: (this['nets']! as List<Object?>).toNets(),
+    separator: (this['separator'] as List<Object?>?)?.toSeparator(),
   );
 }

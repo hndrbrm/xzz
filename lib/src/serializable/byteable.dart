@@ -2,6 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'jsonable.dart';
+
 class Bytesable {
   Bytesable(this._toBytes);
 
@@ -12,4 +14,8 @@ class Bytesable {
 
 extension ByteableList on List<int> {
   Bytesable toBytesable() => Bytesable(() => this);
+}
+
+extension ListExtension on List<Object?> {
+  Bytesable toBytesable() => toBytes().toBytesable();
 }

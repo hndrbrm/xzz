@@ -2,6 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../bytes_helper/string_helper.dart';
+
 class Jsonable {
   Jsonable._(this._toJson);
 
@@ -68,10 +70,18 @@ final class InvalidJsonException implements Exception {
   String toString() => "Invalid Json '$id'";
 }
 
+extension JsonableMap on Json {
+  Jsonable toJsonable() => Jsonable._(() => this);
+}
+
 extension JsonListList on Iterable<Object?> {
   JsonList toJsonList() => JsonList._(
     map((e) => e.toJson()),
   );
+}
+
+extension JsonListString on String {
+  JsonList toJsonList() => toString8List().toJsonList();
 }
 
 extension JsonMapMap on Map<String, Object?> {
@@ -80,10 +90,6 @@ extension JsonMapMap on Map<String, Object?> {
       (k, v) => MapEntry(k, v.toJson()),
     ),
   );
-}
-
-extension JsonableMap on Json {
-  Jsonable toJsonable() => Jsonable._(() => this);
 }
 
 extension JsonObject on Object? {
