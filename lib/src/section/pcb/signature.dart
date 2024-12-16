@@ -2,11 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../bytes_helper/iterator_helper.dart';
-import '../bytes_helper/list_helper.dart';
-import '../bytes_helper/string_helper.dart';
-import '../serializable/jsonable.dart';
-import '../serializable/serializable.dart';
+import '../../bytes_helper/iterator_helper.dart';
+import '../../bytes_helper/list_helper.dart';
+import '../../bytes_helper/string_helper.dart';
+import '../../serializable/jsonable.dart';
+import '../../serializable/serializable.dart';
 
 final class Signature implements Serializable {
   const Signature._(this.id);

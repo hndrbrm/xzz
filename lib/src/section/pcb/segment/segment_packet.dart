@@ -2,12 +2,12 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
-import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
-import '../packet/bytesable_packet.dart';
-import '../packet/id_packet.dart';
+import '../../../bytes_helper/list_helper.dart';
+import '../../../serializable/byteable.dart';
+import '../../../serializable/jsonable.dart';
+import '../../../serializable/serializable.dart';
+import '../../packet/bytesable_packet.dart';
+import '../../packet/id_packet.dart';
 import 'segment.dart';
 
 final class SegmentPacket extends IdPacket implements Serializable {
