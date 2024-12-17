@@ -4,6 +4,17 @@
 
 import 'package:fast_gbk/fast_gbk.dart';
 
+extension ListIterator on Iterator<int> {
+  List<int> toList() {
+    final result = <int>[];
+    while (moveNext()) {
+      result.add(current);
+    }
+
+    return result;
+  }
+}
+
 extension ListExtension on List<int> {
   String toHex([ int offset = 0, int? length ]) {
     final buffer = StringBuffer();
@@ -12,6 +23,21 @@ extension ListExtension on List<int> {
       buffer.write(hex);
     }
     return buffer.toString();
+  }
+
+  int toInt32() {
+    final value = toUint32();
+    return value & 0x80000000 == 0 ? value : value - 0x100000000;
+  }
+
+  String toString8() => gbk.decode(this);
+
+  int toUint16() {
+    assert(length >= 2);
+
+    return
+      this[0] |
+      this[1] << 8;
   }
 
   int toUint32() {
@@ -23,21 +49,6 @@ extension ListExtension on List<int> {
       this[2] << 16 |
       this[3] << 24;
   }
-
-  int toInt32() {
-    final value = toUint32();
-    return value & 0x80000000 == 0 ? value : value - 0x100000000;
-  }
-
-  int toUint16() {
-    assert(length >= 2);
-
-    return
-      this[0] |
-      this[1] << 8;
-  }
-
-  String toString8() => gbk.decode(this);
 }
 
 bool listEqual(List a, List b) {
