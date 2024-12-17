@@ -1,0 +1,45 @@
+// Copyright 2024. Please see the AUTHORS file for details.
+// All rights reserved. Use of this source code is governed
+// by a BSD-style license that can be found in the LICENSE file.
+
+import '../../serializable/jsonable.dart';
+import '../../serializable/serializable.dart';
+import 'pad.dart';
+
+final class Content implements Serializable {
+  const Content._({
+    required this.reference,
+    required this.pad,
+  });
+
+  final String reference;
+  final Pad pad;
+
+  @override
+  List<int> toBytes() => toJson().toBytes();
+
+  @override
+  JsonMap toJson() => {
+    'reference': reference,
+    'pad': pad.toJson(),
+  }.toJsonMap();
+
+  @override
+  bool operator ==(Object other) =>
+    other is Content &&
+    other.reference == reference &&
+    other.pad == pad;
+
+  @override
+  int get hashCode => Object.hash(
+    reference,
+    pad,
+  );
+}
+
+extension ContentMap on Map<String, Object?> {
+  Content toContent() => Content._(
+    reference: this['reference']! as String,
+    pad: (this['pad']! as List<Object?>).toPad(),
+  );
+}

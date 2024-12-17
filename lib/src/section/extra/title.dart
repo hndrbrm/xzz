@@ -26,8 +26,6 @@ final class Title implements Serializable {
   int get hashCode => title.hashCode;
 }
 
-final class InvalidTitleException implements Exception {}
-
 extension TitleIterator on Iterator<int> {
   Title toTitle() => Title._(toStringType());
 }

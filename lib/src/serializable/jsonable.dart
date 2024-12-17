@@ -2,6 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import '../bytes_helper/string_helper.dart';
 
 class Jsonable {
@@ -74,7 +76,11 @@ extension JsonableMap on Json {
   Jsonable toJsonable() => Jsonable._(() => this);
 }
 
-extension JsonListList on Iterable<Object?> {
+extension JsonBytes on Json {
+  List<int> toBytes() => jsonEncode(toObject()).toString8List();
+}
+
+extension JsonListIterable on Iterable<Object?> {
   JsonList toJsonList() => JsonList._(
     map((e) => e.toJson()),
   );
