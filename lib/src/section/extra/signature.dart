@@ -3,21 +3,20 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/iterator_helper.dart';
-import '../../bytes_helper/list_helper.dart';
-import '../../bytes_helper/string_helper.dart';
 import '../../serializable/jsonable.dart';
 import '../../serializable/serializable.dart';
+import 'string_type.dart';
 
 final class Signature implements Serializable {
   const Signature._(this.id);
 
-  final String id;
+  final StringType id;
 
   @override
-  List<int> toBytes() => id.toString8List();
+  List<int> toBytes() => id.toBytes();
 
   @override
-  JsonList toJson() => id.toString8List().toJsonList();
+  JsonList toJson() => id.toBytes().toJsonList();
 
   @override
   bool operator ==(Object other) =>
@@ -31,10 +30,10 @@ final class Signature implements Serializable {
 final class InvalidSignatureException implements Exception {}
 
 extension SignatureIterator on Iterator<int> {
-  static const _id = 'v6v6555v6v6';
+  static const _id = StringType('v6v6555v6v6');
 
   Signature toSignature() {
-    final id = read(_id.length).toString8();
+    final id = read(_id.length).toStringType();
     if (id != _id) {
       throw InvalidSignatureException();
     }
@@ -44,9 +43,7 @@ extension SignatureIterator on Iterator<int> {
 }
 
 extension SignatureList on List<int> {
-  static const _marker = 'v6v6555v6v6';
-
-  int findSignature() => _findMarker(this, _marker.toString8List());
+  int findSignature() => _findMarker(this, SignatureIterator._id.toBytes());
 
   Signature toSignature() => iterator.toSignature();
 
