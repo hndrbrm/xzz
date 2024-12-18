@@ -2,8 +2,10 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../bytes_helper/list_helper.dart';
 import '../../serializable/jsonable.dart';
 import '../../serializable/serializable.dart';
+import 'pad.dart';
 import 'part.dart';
 import 'signature.dart';
 import 'title.dart';
@@ -48,16 +50,17 @@ final class Extra implements Serializable {
   );
 }
 
-extension ExtraIterator on Iterator<int> {
-  Extra toExtra() => Extra._(
-    signature: toSignature(),
-    title: toTitle(),
-    part: toPart(),
-  );
-}
-
 extension ExtraList on List<int> {
-  Extra toExtra() => iterator.toExtra();
+  Extra toExtra() {
+    final signature = toSignature();
+    final rest = sublist(signature.toBytes().length).iterator;
+
+    return Extra._(
+      signature: signature,
+      title: rest.toTitle(),
+      part: rest.toPart(),
+    );
+  }
 }
 
 extension ExtraMap on Map<String, Object?> {

@@ -66,7 +66,7 @@ extension PcbJsonMap on JsonMap {
   Pcb toPcb() => toObject().toPcb();
 }
 
-extension PcbList on Iterator<int> {
+extension PcbIterator on Iterator<int> {
   Pcb toPcb() => Pcb._(
     signature: toSignature(),
     offset: toOffset(),

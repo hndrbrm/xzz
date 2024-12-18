@@ -2,8 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'bytes_helper/list_helper.dart';
 import 'section/extra/extra.dart';
-import 'section/extra/signature.dart';
 import 'section/pcb/pcb.dart';
 import 'serializable/jsonable.dart';
 import 'serializable/serializable.dart';
@@ -48,21 +48,15 @@ extension XzzJsonMap on JsonMap {
   Xzz toXzz() => toObject().toXzz();
 }
 
+extension XzzIterator on Iterator<int> {
+  Xzz toXzz() => Xzz._(
+    pcb: toPcb(),
+    extra: toList().toExtra(),
+  );
+}
+
 extension XzzList on List<int> {
-  Xzz toXzz() {
-    final position = findSignature();
-
-    if (position == -1) {
-      return Xzz._(
-        pcb: iterator.toPcb(),
-      );
-    }
-
-    return Xzz._(
-      pcb: iterator.toPcb(),
-      extra: sublist(position).toExtra(),
-    );
-  }
+  Xzz toXzz() => iterator.toXzz();
 }
 
 extension XzzMap on Map<String, Object?> {

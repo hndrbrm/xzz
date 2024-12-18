@@ -16,9 +16,9 @@ extension ListIterator on Iterator<int> {
 }
 
 extension ListExtension on List<int> {
-  String toHex([ int offset = 0, int? length ]) {
+  String toHex() {
     final buffer = StringBuffer();
-    for (var i = offset; i < (length ?? this.length); i++) {
+    for (var i = 0; i < length; i++) {
       final hex = elementAt(i).toRadixString(16).padLeft(2, '0');
       buffer.write(hex);
     }
