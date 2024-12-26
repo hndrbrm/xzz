@@ -2,7 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'pad.dart';
 
@@ -16,7 +17,7 @@ final class Content implements Bytesable, Jsonable {
   final Pad pad;
 
   @override
-  List<int> toBytes() => toJson().toBytes();
+  Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
@@ -37,7 +38,7 @@ final class Content implements Bytesable, Jsonable {
   );
 }
 
-extension ContentMap on Map<String, Object?> {
+extension ContentOnMap on Map<String, Object?> {
   Content toContent() => Content._(
     reference: this['reference']! as String,
     pad: (this['pad']! as List<Object?>).toPad(),

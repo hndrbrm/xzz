@@ -3,7 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../../bytes_helper/list_helper.dart';
-import '../../../../serializable/byteable.dart';
+import '../../../../serializable/bytesable.dart';
 import '../../../../serializable/jsonable.dart';
 import '../../../packet/id_packet.dart';
 import 'component.dart';
@@ -50,7 +50,14 @@ final class UnknownComponentException implements Exception {
   String toString() => "Unknown Component '$id'";
 }
 
-extension ComponentPacketIterator on Iterator<int> {
+extension ComponentPacketOnComponent on Component {
+  ComponentPacket toComponentPacket() => ComponentPacket(
+    id: type,
+    content: toBytes().toBytesable(),
+  );
+}
+
+extension ComponentPacketOnIterator on Iterator<int> {
   ComponentPacket toComponentPacket() {
     final packet = toIdPacket();
 
@@ -61,11 +68,11 @@ extension ComponentPacketIterator on Iterator<int> {
   }
 }
 
-extension ComponentPacketJsonMap on JsonMap {
+extension ComponentPacketOnJsonMap on JsonMap {
   ComponentPacket toComponentPacket() => toObject().toComponentPacket();
 }
 
-extension ComponentPacketMap on Map<String, Object?> {
+extension ComponentPacketOnMap on Map<String, Object?> {
   ComponentPacket toComponentPacket() => toComponent().toComponentPacket();
 
   Component toComponent() {
@@ -80,11 +87,4 @@ extension ComponentPacketMap on Map<String, Object?> {
       _ => throw UnknownComponentException(id),
     };
   }
-}
-
-extension ComponentPacketComponent on Component {
-  ComponentPacket toComponentPacket() => ComponentPacket(
-    id: type,
-    content: toBytes().toBytesable(),
-  );
 }

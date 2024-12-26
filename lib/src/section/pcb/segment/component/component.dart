@@ -3,9 +3,9 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../../bytes_helper/int_helper.dart';
-import '../../../../bytes_helper/iterator_helper.dart';
 import '../../../../bytes_helper/list_helper.dart';
-import '../../../../serializable/byteable.dart';
+import '../../../../serializable/bytes.dart';
+import '../../../../serializable/bytesable.dart';
 import '../../../../serializable/jsonable.dart';
 import '../../../packet/string_packet.dart';
 
@@ -18,7 +18,7 @@ sealed class Component implements Bytesable, Jsonable {
 final class UnknownComponent extends Component {
   const UnknownComponent._(this.raw);
 
-  final List<int> raw;
+  final Bytes raw;
 
   static const id = 1;
 
@@ -26,7 +26,7 @@ final class UnknownComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toBytes() => raw;
+  Bytes toBytes() => raw;
 
   @override
   JsonMap toJson() => { 'raw': raw }.toJsonMap();
@@ -43,7 +43,7 @@ final class UnknownComponent extends Component {
 final class LineComponent extends Component {
   const LineComponent._(this.raw);
 
-  final List<int> raw;
+  final Bytes raw;
 
   static const id = 5;
 
@@ -51,7 +51,7 @@ final class LineComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toBytes() => raw;
+  Bytes toBytes() => raw;
 
   @override
   JsonMap toJson() => { 'raw': raw }.toJsonMap();
@@ -68,7 +68,7 @@ final class LineComponent extends Component {
 final class LabelComponent extends Component {
   const LabelComponent._(this.raw);
 
-  final List<int> raw;
+  final Bytes raw;
 
   static const id = 6;
 
@@ -76,7 +76,7 @@ final class LabelComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toBytes() => raw;
+  Bytes toBytes() => raw;
 
   @override
   JsonMap toJson() => { 'raw': raw }.toJsonMap();
@@ -105,11 +105,11 @@ final class PinComponent extends Component {
   final int unknown1;
   final int x;
   final int y;
-  final List<int> unknown2;
+  final Bytes unknown2;
   final String name;
-  final List<int> unknown3;
+  final Bytes unknown3;
   final int netIndex;
-  final List<int> unknown4;
+  final Bytes unknown4;
 
   static const id = 9;
 
@@ -117,7 +117,7 @@ final class PinComponent extends Component {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...unknown1.toUint32List(),
     ...x.toUint32List(),
     ...y.toUint32List(),
@@ -165,7 +165,14 @@ final class PinComponent extends Component {
   );
 }
 
-extension ComponentIterator on Iterator<int> {
+extension ComponentOnBytes on Bytes {
+  UnknownComponent toUnknownComponent() => UnknownComponent._(this);
+  LineComponent toLineComponent() => LineComponent._(this);
+  LabelComponent toLabelComponent() => LabelComponent._(this);
+  PinComponent toPinComponent() => iterator.toPinComponent();
+}
+
+extension ComponentOnIterator on Iterator<int> {
   PinComponent toPinComponent() => PinComponent._(
     unknown1: read(4).toUint32(),
     x: read(4).toUint32(),
@@ -178,21 +185,14 @@ extension ComponentIterator on Iterator<int> {
   );
 }
 
-extension ComponentJsonMap on JsonMap {
+extension ComponentOnJsonMap on JsonMap {
   UnknownComponent toUnknownComponent() => toObject().toUnknownComponent();
   LineComponent toLineComponent() => toObject().toLineComponent();
   LabelComponent toLabelComponent() => toObject().toLabelComponent();
   PinComponent toPinComponent() => toObject().toPinComponent();
 }
 
-extension ComponentList on List<int> {
-  UnknownComponent toUnknownComponent() => UnknownComponent._(this);
-  LineComponent toLineComponent() => LineComponent._(this);
-  LabelComponent toLabelComponent() => LabelComponent._(this);
-  PinComponent toPinComponent() => iterator.toPinComponent();
-}
-
-extension ComponentMap on Map<String, Object?> {
+extension ComponentOnMap on Map<String, Object?> {
   UnknownComponent toUnknownComponent() => UnknownComponent._(
     (this['raw']! as List<Object?>).toBytes(),
   );

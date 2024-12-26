@@ -3,9 +3,9 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/int_helper.dart';
-import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 
 /// The offset of the section [boardOffset], [imageOffset], [netOffset] are
@@ -20,14 +20,14 @@ final class Offset implements Bytesable, Jsonable {
     required this.unknown2,
   });
 
-  final List<int> unknown1;
+  final Bytes unknown1;
   final int boardOffset;
   final int imageOffset;
   final int netOffset;
-  final List<int> unknown2;
+  final Bytes unknown2;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...unknown1,
     ...boardOffset.toUint32List(),
     ...imageOffset.toUint32List(),
@@ -65,6 +65,10 @@ final class Offset implements Bytesable, Jsonable {
 
 final class InvalidOffsetException extends FormatException {}
 
+extension OffsetOnBytes on Bytes {
+  Offset toOffset() => iterator.toOffset();
+}
+
 extension OffsetOnIterator on Iterator<int> {
   Offset toOffset() => Offset._(
     unknown1: read(21),
@@ -73,10 +77,6 @@ extension OffsetOnIterator on Iterator<int> {
     netOffset: read(4).toUint32(),
     unknown2: read(20),
   );
-}
-
-extension OffsetOnList on List<int> {
-  Offset toOffset() => iterator.toOffset();
 }
 
 extension OffsetOnJsonMap on JsonMap {

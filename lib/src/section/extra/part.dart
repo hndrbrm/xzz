@@ -5,7 +5,8 @@
 import 'dart:convert';
 
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'content.dart';
 import 'resistance_type.dart';
@@ -29,7 +30,7 @@ final class Part1<Content> extends Part {
   const Part1(super.contents);
 
   @override
-  List<int> toBytes() => toJson().toBytes();
+  Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
@@ -52,7 +53,7 @@ final class Part2<ResistanceType> extends Part {
   const Part2(super.contents);
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => <int>[
     for (final content in contents)
     ...content.toBytes(),
   ];
@@ -74,9 +75,15 @@ final class Part2<ResistanceType> extends Part {
   int get hashCode => Object.hashAll(contents);
 }
 
+extension PartOnBytes on Bytes {
+  Part1 toPart1() => iterator.toPart1();
+
+  Part2 toPart2() => iterator.toPart2();
+}
+
 extension PartOnIterator on Iterator<int> {
   Part1 toPart1() {
-    final json = toList().toString8();
+    final json = toBytes().toString8();
     final map = jsonDecode(json) as Map<String, Object?>;
 
     return map.toPart1();
@@ -93,12 +100,6 @@ extension PartOnIterator on Iterator<int> {
       }
     }
   }
-}
-
-extension PartOnList on List<int> {
-  Part1 toPart1() => iterator.toPart1();
-
-  Part2 toPart2() => iterator.toPart2();
 }
 
 extension PartOnMap on Map<String, Object?> {

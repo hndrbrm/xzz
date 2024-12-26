@@ -146,16 +146,16 @@ final class PcbBytes {
     );
   }
 
-  final List<int> pcbSignature;
-  final List<int> offset;
-  final List<int> segments;
-  final List<int> images;
-  final List<int> nets;
-  final List<int>? extraSignature;
-  final List<int>? title;
-  final List<int>? part;
+  final Bytes pcbSignature;
+  final Bytes offset;
+  final Bytes segments;
+  final Bytes images;
+  final Bytes nets;
+  final Bytes? extraSignature;
+  final Bytes? title;
+  final Bytes? part;
 
-  List<int> get pcb => <int>[
+  Bytes get pcb => <int>[
     ...pcbSignature,
     ...offset,
     ...segments,
@@ -168,7 +168,7 @@ final class PcbBytes {
     title != null &&
     part != null;
 
-  List<int>? get extra => hasExtra
+  Bytes? get extra => hasExtra
     ? <int>[
       ...extraSignature!,
       ...title!,
@@ -176,7 +176,7 @@ final class PcbBytes {
     ]
     : null;
 
-  List<int> get xzz => <int>[
+  Bytes get xzz => <int>[
     ...pcb,
     if (hasExtra)
     ...extra!,

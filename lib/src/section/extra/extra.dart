@@ -2,7 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'extra_signature.dart';
 import 'part.dart';
@@ -20,7 +21,7 @@ final class Extra implements Bytesable, Jsonable {
   final Part part;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...signature.toBytes(),
     ...title.toBytes(),
     ...part.toBytes(),
@@ -48,7 +49,7 @@ final class Extra implements Bytesable, Jsonable {
   );
 }
 
-extension ExtraList on List<int> {
+extension ExtraOnBytes on Bytes {
   Extra toExtra() {
     final signature = toExtraSignature();
     final rest = sublist(signature.toBytes().length).iterator;
@@ -67,7 +68,7 @@ extension ExtraList on List<int> {
   }
 }
 
-extension ExtraMap on Map<String, Object?> {
+extension ExtraOnMap on Map<String, Object?> {
   Extra toExtra() {
     final signature = (this['signature']! as List<Object?>)
       .toBytes()

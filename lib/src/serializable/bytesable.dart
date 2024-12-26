@@ -2,27 +2,28 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'bytes.dart';
 import 'jsonable.dart';
 
 class Bytesable with BytesableMixin {
   const Bytesable([ this._toBytes ]);
 
   @override
-  final List<int> Function()? _toBytes;
+  final Bytes Function()? _toBytes;
 }
 
 mixin BytesableMixin {
-  List<int> Function()? get _toBytes;
+  Bytes Function()? get _toBytes;
 
-  List<int> toBytes() =>
+  Bytes toBytes() =>
     _toBytes?.call() ??
     (throw UnimplementedError('$runtimeType'));
 }
 
-extension ByteableList on List<int> {
+extension BytesableOnBytes on Bytes {
   Bytesable toBytesable() => Bytesable(() => this);
 }
 
-extension ListExtension on List<Object?> {
+extension BytesableOnList on List<Object?> {
   Bytesable toBytesable() => toBytes().toBytesable();
 }

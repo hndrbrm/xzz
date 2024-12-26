@@ -3,6 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../bytes_helper/list_helper.dart';
+import '../../../serializable/bytes.dart';
 import '../../../serializable/jsonable.dart';
 import '../../packet/bytesable_packet.dart';
 import 'image.dart';
@@ -19,19 +20,19 @@ class Images extends BytesablePacket<Image> {
   int get hashCode => Object.hashAll(whole);
 }
 
+extension ImagesOnBytes on Bytes {
+  Images toImages() => iterator.toImages();
+}
+
 extension ImagesOnIterator on Iterator<int> {
   Images toImages() {
-    final whole = toByteablePacket((e) => e.toImage());
+    final whole = toBytesablePacket((e) => e.toImage());
     return Images(whole.whole);
   }
 }
 
 extension ImagesOnJsonList on JsonList {
   Images toImages() => toObject().toImages();
-}
-
-extension ImagesOnListInt on List<int> {
-  Images toImages() => iterator.toImages();
 }
 
 extension ImagesOnListObject on List<Object?> {

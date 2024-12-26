@@ -2,13 +2,14 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'image/images.dart';
 import 'net/nets.dart';
 import 'offset.dart';
-import 'segment/segments.dart';
 import 'pcb_signature.dart';
+import 'segment/segments.dart';
 
 final class Pcb implements Bytesable, Jsonable {
   const Pcb._({
@@ -26,7 +27,7 @@ final class Pcb implements Bytesable, Jsonable {
   final Nets nets;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...signature.toBytes(),
     ...offset.toBytes(),
     ...segments.toBytes(),
@@ -62,8 +63,8 @@ final class Pcb implements Bytesable, Jsonable {
   );
 }
 
-extension PcbOnJsonMap on JsonMap {
-  Pcb toPcb() => toObject().toPcb();
+extension PcbOnBytes on Bytes {
+  Pcb toPcb() => iterator.toPcb();
 }
 
 extension PcbOnIterator on Iterator<int> {
@@ -76,8 +77,8 @@ extension PcbOnIterator on Iterator<int> {
   );
 }
 
-extension PcbOnList on List<int> {
-  Pcb toPcb() => iterator.toPcb();
+extension PcbOnJsonMap on JsonMap {
+  Pcb toPcb() => toObject().toPcb();
 }
 
 extension PcbOnMap on Map<String, Object?> {

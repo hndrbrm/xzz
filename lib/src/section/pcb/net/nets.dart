@@ -3,6 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../bytes_helper/list_helper.dart';
+import '../../../serializable/bytes.dart';
 import '../../../serializable/jsonable.dart';
 import '../../packet/bytesable_packet.dart';
 import 'net.dart';
@@ -19,19 +20,19 @@ class Nets extends BytesablePacket<Net> {
   int get hashCode => Object.hashAll(whole);
 }
 
+extension NetsOnBytes on Bytes {
+  Nets toNets() => iterator.toNets();
+}
+
 extension NetsOnIterator on Iterator<int> {
   Nets toNets() {
-    final whole = toByteablePacket((e) => e.toNet());
+    final whole = toBytesablePacket((e) => e.toNet());
     return Nets(whole.whole);
   }
 }
 
 extension NetsOnJsonList on JsonList {
   Nets toNets() => toObject().toNets();
-}
-
-extension NetsOnListInt on List<int> {
-  Nets toNets() => iterator.toNets();
 }
 
 extension NetsOnListObject on List<Object?> {

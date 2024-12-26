@@ -4,17 +4,6 @@
 
 import 'package:fast_gbk/fast_gbk.dart';
 
-extension ListIterator on Iterator<int> {
-  List<int> toList() {
-    final result = <int>[];
-    while (moveNext()) {
-      result.add(current);
-    }
-
-    return result;
-  }
-}
-
 extension ListExtension on List<int> {
   String toHex() {
     final buffer = StringBuffer();

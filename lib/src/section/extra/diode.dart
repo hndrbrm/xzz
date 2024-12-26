@@ -2,7 +2,8 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 
 final class Diode implements Bytesable, Jsonable {
@@ -15,7 +16,7 @@ final class Diode implements Bytesable, Jsonable {
   final String value;
 
   @override
-  List<int> toBytes() => toJson().toBytes();
+  Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
@@ -36,7 +37,7 @@ final class Diode implements Bytesable, Jsonable {
   );
 }
 
-extension DiodeMap on Map<String, Object?> {
+extension DiodeOnMap on Map<String, Object?> {
   Diode toDiode() => Diode._(
     name: this['name']! as String,
     value: this['diode']! as String,

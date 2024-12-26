@@ -3,9 +3,9 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../bytes_helper/int_helper.dart';
-import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
-import '../../../serializable/byteable.dart';
+import '../../../serializable/bytes.dart';
+import '../../../serializable/bytesable.dart';
 import '../../../serializable/jsonable.dart';
 import '../../packet/string_packet.dart';
 
@@ -27,7 +27,7 @@ final class Image implements Bytesable, Jsonable {
   final String name;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     id,
     index,
     flag,

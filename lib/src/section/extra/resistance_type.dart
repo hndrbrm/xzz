@@ -17,14 +17,14 @@ extension ResistanceTypeOnJson on Json {
   ResistanceType toResistanceType() => toResistance().toResistanceType();
 }
 
+extension ResistanceTypeOnMap on Map<String, Object?> {
+  ResistanceType toResistanceType() => toJson().toResistanceType();
+}
+
 extension ResistanceTypeOnResistance on Resistance {
   ResistanceType toResistanceType() => ResistanceType(toText());
 }
 
 extension ResistanceTypeOnTextType on TextType {
   ResistanceType toResistanceType() => ResistanceType(content);
-}
-
-extension ResistanceTypeOnMap on Map<String, Object?> {
-  ResistanceType toResistanceType() => toJson().toResistanceType();
 }

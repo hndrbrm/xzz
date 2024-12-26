@@ -15,5 +15,5 @@ extension IntExtension on int {
     (this >> 24) & 0xff,
   ];
 
-  List<int> toInt32List() => (this & 0xFFFFFFFF).toUint32List();
+  List<int> toInt32List() => (this & 0xffffffff).toUint32List();
 }

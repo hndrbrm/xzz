@@ -4,7 +4,8 @@
 
 import 'dart:collection';
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'length_packet.dart';
 
@@ -20,7 +21,7 @@ implements Bytesable, Jsonable
   Iterator<T> get iterator => whole.iterator;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     for (final each in whole)
     ...(each as Bytesable).toBytes(),
   ].toBytesable().toLengthPacket().toBytes();
@@ -32,8 +33,8 @@ implements Bytesable, Jsonable
     .toJsonList();
 }
 
-extension BytesableIterator on Iterator<int> {
-  BytesablePacket<T> toByteablePacket<T extends Bytesable>(T Function(Iterator<int> iterator) debyte) {
+extension BytesablePacketOnIterator on Iterator<int> {
+  BytesablePacket<T> toBytesablePacket<T extends Bytesable>(T Function(Iterator<int> iterator) debyte) {
     final packet = toLengthPacket()!.content.toBytes();
     final packetIterator = packet.iterator;
 
@@ -49,8 +50,8 @@ extension BytesableIterator on Iterator<int> {
   }
 }
 
-extension BytesablePacketMap on Map<String, Object?> {
-  BytesablePacket<T> toByteablePacket<T>() {
+extension BytesablePacketOnMap on Map<String, Object?> {
+  BytesablePacket<T> toBytesablePacket<T>() {
     final whole = this['whole']! as List<T>;
     return BytesablePacket<T>(whole);
   }

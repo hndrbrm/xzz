@@ -3,9 +3,9 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/int_helper.dart';
-import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 
 class LengthPacket implements Bytesable {
   const LengthPacket(this.content);
@@ -13,7 +13,7 @@ class LengthPacket implements Bytesable {
   final Bytesable content;
 
   @override
-  List<int> toBytes() {
+  Bytes toBytes() {
     final byte = content.toBytes();
 
     return [
@@ -23,7 +23,11 @@ class LengthPacket implements Bytesable {
   }
 }
 
-extension LengthPacketIterator on Iterator<int> {
+extension LengthPacketOnBytesable on Bytesable {
+  LengthPacket toLengthPacket() => LengthPacket(this);
+}
+
+extension LengthPacketOnIterator on Iterator<int> {
   LengthPacket? toLengthPacket() {
     final probe = read(4);
     if (probe.isEmpty) {
@@ -35,8 +39,4 @@ extension LengthPacketIterator on Iterator<int> {
 
     return body.toBytesable().toLengthPacket();
   }
-}
-
-extension LengthPacketByteable on Bytesable {
-  LengthPacket toLengthPacket() => LengthPacket(this);
 }

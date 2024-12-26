@@ -2,10 +2,10 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'bytes_helper/list_helper.dart';
 import 'section/extra/extra.dart';
 import 'section/pcb/pcb.dart';
-import 'serializable/byteable.dart';
+import 'serializable/bytes.dart';
+import 'serializable/bytesable.dart';
 import 'serializable/jsonable.dart';
 
 final class Xzz implements Bytesable, Jsonable {
@@ -18,7 +18,7 @@ final class Xzz implements Bytesable, Jsonable {
   final Extra? extra;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...pcb.toBytes(),
     if (extra != null)
     ...extra!.toBytes(),
@@ -44,15 +44,15 @@ final class Xzz implements Bytesable, Jsonable {
   );
 }
 
-extension XzzJsonMap on JsonMap {
-  Xzz toXzz() => toObject().toXzz();
+extension XzzOnBytes on Bytes {
+  Xzz toXzz() => iterator.toXzz();
 }
 
-extension XzzIterator on Iterator<int> {
+extension XzzOnIterator on Iterator<int> {
   Xzz toXzz() {
     final pcb = toPcb();
 
-    final list = toList();
+    final list = toBytes();
     final extra = list.isEmpty ? null : list.toExtra();
 
     return Xzz._(
@@ -62,11 +62,11 @@ extension XzzIterator on Iterator<int> {
   }
 }
 
-extension XzzList on List<int> {
-  Xzz toXzz() => iterator.toXzz();
+extension XzzOnJsonMap on JsonMap {
+  Xzz toXzz() => toObject().toXzz();
 }
 
-extension XzzMap on Map<String, Object?> {
+extension XzzOnMap on Map<String, Object?> {
   Xzz toXzz() => Xzz._(
     pcb: (this['pcb']! as Map<String, Object?>).toPcb(),
     extra: (this['extra'] as Map<String, Object?>?)?.toExtra(),

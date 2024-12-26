@@ -3,7 +3,7 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../../bytes_helper/list_helper.dart';
-import '../../../serializable/byteable.dart';
+import '../../../serializable/bytesable.dart';
 import '../../../serializable/jsonable.dart';
 import '../../packet/bytesable_packet.dart';
 import '../../packet/id_packet.dart';
@@ -54,7 +54,7 @@ final class UnknownSegmentException implements Exception {
   String toString() => "Unknown Segment '$id'";
 }
 
-extension SegmentIterator on Iterator<int> {
+extension SegmentPacketOnIterator on Iterator<int> {
   SegmentPacket toSegmentPacket() {
     final packet = toIdPacket();
 
@@ -64,16 +64,16 @@ extension SegmentIterator on Iterator<int> {
     );
   }
 
-  BytesablePacket<SegmentPacket> toSegmentPacketBytesable() => toByteablePacket(
+  BytesablePacket<SegmentPacket> toSegmentPacketBytesable() => toBytesablePacket(
     (e) => e.toSegmentPacket()
   );
 }
 
-extension SegmentPacketJsonMap on JsonMap {
+extension SegmentPacketOnJsonMap on JsonMap {
   SegmentPacket toSegmentPacket() => toObject().toSegmentPacket();
 }
 
-extension SegmentPacketMap on Map<String, Object?> {
+extension SegmentPacketOnMap on Map<String, Object?> {
   SegmentPacket toSegmentPacket() {
     final id = this['id']! as int;
     final segment = this['segment']! as Map<String, Object?>;
@@ -95,7 +95,7 @@ extension SegmentPacketMap on Map<String, Object?> {
   }
 }
 
-extension SegmentPacketSegment on Segment {
+extension SegmentPacketOnSegment on Segment {
   SegmentPacket toSegmentPacket() => SegmentPacket._(
     id: type,
     content: toBytes().toBytesable(),

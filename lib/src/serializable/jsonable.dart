@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import '../bytes_helper/string_helper.dart';
+import 'bytes.dart';
 
 class Jsonable with JsonableMixin {
   const Jsonable._([ this._toJson ]);
@@ -79,25 +79,29 @@ final class InvalidJsonException implements Exception {
   String toString() => "Invalid Json '$_id'";
 }
 
-extension JsonableMap on Json {
+extension BytesOnJson on Json {
+  Bytes toBytes() => jsonEncode(toObject()).toBytes();
+}
+
+extension BytesOnList on List<Object?> {
+  Bytes toBytes() => map((e) => e! as int).toList();
+}
+
+extension JsonableOnJson on Json {
   Jsonable toJsonable() => Jsonable._(() => this);
 }
 
-extension JsonBytes on Json {
-  List<int> toBytes() => jsonEncode(toObject()).toString8List();
-}
-
-extension JsonListIterable on Iterable<Object?> {
+extension JsonListOnIterable on Iterable<Object?> {
   JsonList toJsonList() => JsonList._(
     map((e) => e.toJson()),
   );
 }
 
-extension JsonListString on String {
-  JsonList toJsonList() => toString8List().toJsonList();
+extension JsonListOnString on String {
+  JsonList toJsonList() => toBytes().toJsonList();
 }
 
-extension JsonMapMap on Map<String, Object?> {
+extension JsonMapOnMap on Map<String, Object?> {
   JsonMap toJsonMap() => JsonMap._(
     map(
       (k, v) => MapEntry(k, v.toJson()),
@@ -105,7 +109,7 @@ extension JsonMapMap on Map<String, Object?> {
   );
 }
 
-extension JsonObject on Object? {
+extension JsonOnObject on Object? {
   Json toJson() => switch (this) {
     null => const JsonNull._(),
     final Json value => value,
@@ -115,8 +119,4 @@ extension JsonObject on Object? {
     final String value => JsonString._(value),
     _ => throw InvalidJsonException(runtimeType),
   };
-}
-
-extension ListExtension on List<Object?> {
-  List<int> toBytes() => map((e) => e! as int).toList();
 }

@@ -3,9 +3,9 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/int_helper.dart';
-import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import 'length_packet.dart';
 
 class IdPacket implements Bytesable {
@@ -18,7 +18,7 @@ class IdPacket implements Bytesable {
   final Bytesable content;
 
   @override
-  List<int> toBytes() {
+  Bytes toBytes() {
     final byte = content.toBytes();
 
     return [
@@ -41,7 +41,7 @@ class IdPacket implements Bytesable {
   );
 }
 
-extension IdPacketIterator on Iterator<int> {
+extension IdPacketOnIterator on Iterator<int> {
   IdPacket toIdPacket() =>
     IdPacket(
       id: read(1).first,

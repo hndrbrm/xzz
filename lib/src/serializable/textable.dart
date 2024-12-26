@@ -2,21 +2,23 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import 'text.dart';
+
 class Textable with TextableMixin {
   const Textable([ this._toText ]);
 
   @override
-  final String Function()? _toText;
+  final Text Function()? _toText;
 }
 
 mixin TextableMixin {
-  String Function()? get _toText;
+  Text Function()? get _toText;
 
-  String toText() =>
+  Text toText() =>
     _toText?.call() ??
     (throw UnimplementedError('$runtimeType'));
 }
 
-extension ByteableList on String {
+extension TextableOnString on Text {
   Textable toTextable() => Textable(() => this);
 }

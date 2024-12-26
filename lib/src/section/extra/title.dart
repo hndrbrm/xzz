@@ -2,34 +2,35 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'text_type.dart';
 
 final class Title implements Bytesable, Jsonable {
-  const Title._(this.title);
+  const Title._(this._title);
 
-  final TextType title;
-
-  @override
-  List<int> toBytes() => title.toBytes();
+  final TextType _title;
 
   @override
-  JsonList toJson() => title.toBytes().toJsonList();
+  Bytes toBytes() => _title.toBytes();
+
+  @override
+  JsonList toJson() => _title.toBytes().toJsonList();
 
   @override
   bool operator ==(Object other) =>
     other is Title &&
-    other.title == title;
+    other._title == _title;
 
   @override
-  int get hashCode => title.hashCode;
+  int get hashCode => _title.hashCode;
 }
 
-extension TitleIterator on Iterator<int> {
-  Title toTitle() => Title._(toTextType());
-}
-
-extension TitleList on List<int> {
+extension TitleOnBytes on Bytes {
   Title toTitle() => iterator.toTitle();
+}
+
+extension TitleOnIterator on Iterator<int> {
+  Title toTitle() => Title._(toTextType());
 }

@@ -5,9 +5,9 @@
 import 'package:dart_des/dart_des.dart';
 
 import '../../../bytes_helper/int_helper.dart';
-import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
-import '../../../serializable/byteable.dart';
+import '../../../serializable/bytes.dart';
+import '../../../serializable/bytesable.dart';
 import '../../../serializable/jsonable.dart';
 import '../../packet/length_packet.dart';
 import '../../packet/string_packet.dart';
@@ -53,7 +53,7 @@ final class ArcSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...layer.toUint32List(),
     ...x.toUint32List(),
     ...y.toUint32List(),
@@ -128,7 +128,7 @@ final class ViaSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...x.toInt32List(),
     ...y.toInt32List(),
     ...layerARadius.toInt32List(),
@@ -207,7 +207,7 @@ final class UnknownSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...unknown1.toUint32List(),
     ...centerX.toUint32List(),
     ...centerY.toUint32List(),
@@ -284,7 +284,7 @@ final class LineSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...layer.toUint32List(),
     ...x1.toInt32List(),
     ...y1.toInt32List(),
@@ -355,7 +355,7 @@ final class TextSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...unknown1.toUint32List(),
     ...positionX.toUint32List(),
     ...positionY.toUint32List(),
@@ -412,9 +412,9 @@ final class ComponentSegment extends Segment {
     required this.components,
   });
 
-  final List<int> unknown1;
+  final Bytes unknown1;
   final String description;
-  final List<int> unknown2;
+  final Bytes unknown2;
   final String name;
   final List<Component> components;
 
@@ -425,10 +425,10 @@ final class ComponentSegment extends Segment {
     paddingType: DESPaddingType.None,
   );
 
-  List<int> _fillWithZero(List<int> list) {
-    final remainder = 8 - (list.length % 8);
+  Bytes _fillWithZero(Bytes bytes) {
+    final remainder = 8 - (bytes.length % 8);
     return [
-      ...list,
+      ...bytes,
       if (remainder < 8)
       ...List.filled(remainder, 0),
     ];
@@ -438,7 +438,7 @@ final class ComponentSegment extends Segment {
   int get type => id;
 
   @override
-  List<int> toBytes() {
+  Bytes toBytes() {
     final bytes = [
       ...unknown1,
       ...description.toStringPacket().toBytes(),
@@ -529,7 +529,7 @@ final class PadSegment extends Segment {
   int get type => number;
 
   @override
-  List<int> toBytes() => [
+  Bytes toBytes() => [
     ...number.toUint32List(),
     ...originX.toUint32List(),
     ...originY.toUint32List(),
@@ -617,7 +617,42 @@ final class PadSegment extends Segment {
   );
 }
 
-extension SegmentIterator on Iterator<int> {
+extension SegmentOnBytes on Bytes {
+  ComponentSegment toComponentSegment() {
+    final plain = ComponentSegment._des.decrypt(this);
+    final iterator1 = plain.iterator;
+
+    var offset = 0;
+
+    final packet = iterator1.toLengthPacket()!.content.toBytes();
+    final iterator2 = packet.iterator;
+    offset += 4;
+
+    final unknown1 = iterator2.read(18);
+    final description = iterator2.toStringPacket()!.string;
+    final unknown2 = iterator2.read(31);
+    final name = iterator2.toStringPacket()!.string;
+    offset += 18 + 4 + description.length + 31 + 4 + name.length;
+
+    final components = <Component>[];
+
+    for (; offset < packet.length; ) {
+      final packet = iterator2.toComponentPacket();
+      components.add(packet.toComponent());
+      offset += packet.toBytes().length;
+    }
+
+    return ComponentSegment._(
+      unknown1: unknown1,
+      description: description,
+      unknown2: unknown2,
+      name: name,
+      components: components,
+    );
+  }
+}
+
+extension SegmentOnIterator on Iterator<int> {
   ArcSegment toArcSegment() => ArcSegment._(
     layer: read(4).toUint32(),
     x: read(4).toUint32(),
@@ -690,7 +725,7 @@ extension SegmentIterator on Iterator<int> {
   );
 }
 
-extension SegmentJsonMap on JsonMap {
+extension SegmentOnJsonMap on JsonMap {
   ArcSegment toArcSegment() => toObject().toArcSegment();
   ViaSegment toViaSegment() => toObject().toViaSegment();
   UnknownSegment toUnknownSegment() => toObject().toUnknownSegment();
@@ -700,7 +735,7 @@ extension SegmentJsonMap on JsonMap {
   PadSegment toPadSegment() => toObject().toPadSegment();
 }
 
-extension SegmentMap on Map<String, Object?> {
+extension SegmentOnMap on Map<String, Object?> {
   ArcSegment toArcSegment() => ArcSegment._(
     layer: this['layer']! as int,
     x: this['x']! as int,
@@ -781,39 +816,4 @@ extension SegmentMap on Map<String, Object?> {
     flag4: this['flag4']! as int,
     netIndex: this['netIndex']! as int,
   );
-}
-
-extension SegmentList on List<int> {
-  ComponentSegment toComponentSegment() {
-    final plain = ComponentSegment._des.decrypt(this);
-    final iterator1 = plain.iterator;
-
-    var offset = 0;
-
-    final packet = iterator1.toLengthPacket()!.content.toBytes();
-    final iterator2 = packet.iterator;
-    offset += 4;
-
-    final unknown1 = iterator2.read(18);
-    final description = iterator2.toStringPacket()!.string;
-    final unknown2 = iterator2.read(31);
-    final name = iterator2.toStringPacket()!.string;
-    offset += 18 + 4 + description.length + 31 + 4 + name.length;
-
-    final components = <Component>[];
-
-    for (; offset < packet.length; ) {
-      final packet = iterator2.toComponentPacket();
-      components.add(packet.toComponent());
-      offset += packet.toBytes().length;
-    }
-
-    return ComponentSegment._(
-      unknown1: unknown1,
-      description: description,
-      unknown2: unknown2,
-      name: name,
-      components: components,
-    );
-  }
 }

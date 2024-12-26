@@ -3,8 +3,8 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/list_helper.dart';
-import '../../bytes_helper/string_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'length_packet.dart';
 
@@ -17,23 +17,23 @@ class StringPacket extends LengthPacket implements Jsonable {
   JsonMap toJson() => { 'string': string }.toJsonMap();
 }
 
-extension StringPacketIterator on Iterator<int> {
+extension StringPacketOnIterator on Iterator<int> {
   StringPacket? toStringPacket() {
     final content = toLengthPacket()?.content;
     return content == null ? null : StringPacket(content);
   }
 }
 
-extension StringPacketMap on Map<String, dynamic> {
+extension StringPacketOnMap on Map<String, dynamic> {
   StringPacket toStringPacket() {
     final string = this['string'] as String;
     return string.toStringPacket();
   }
 }
 
-extension StringPacketString on String {
+extension StringPacketOnString on String {
   StringPacket toStringPacket() {
-    final content = toString8List().toBytesable();
+    final content = toBytes().toBytesable();
     return StringPacket(content);
   }
 }

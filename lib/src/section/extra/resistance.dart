@@ -2,46 +2,47 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
+import '../../serializable/text.dart';
 import '../../serializable/textable.dart';
 import 'resistance_type.dart';
-import 'text.dart';
 import 'text_type.dart';
 
 final class Resistance implements Bytesable, Jsonable, Textable {
-  const Resistance({
-    required this.value,
-    required this.part,
-    required this.pin,
-  });
+  const Resistance._({
+    required String value,
+    required String part,
+    required String pin,
+  }) : _pin = pin, _part = part, _value = value;
 
-  final String value;
-  final String part;
-  final String pin;
+  final String _value;
+  final String _part;
+  final String _pin;
 
   @override
-  List<int> toBytes() => toText().toTextType().toBytes();
+  Bytes toBytes() => toText().toTextType().toBytes();
 
   @override
   JsonMap toJson() => {
-    'value': value,
-    'part': part,
-    'pin': pin,
+    'value': _value,
+    'part': _part,
+    'pin': _pin,
   }.toJsonMap();
 
   @override
-  String toText() => '=$value=$part($pin)';
+  String toText() => '=$_value=$_part($_pin)';
 
   @override
   bool operator ==(Object other) =>
     other is Resistance &&
-    value == value &&
-    part == part &&
-    pin == pin;
+    _value == _value &&
+    _part == _part &&
+    _pin == _pin;
 
   @override
-  int get hashCode => Object.hash(value, part, pin);
+  int get hashCode => Object.hash(_value, _part, _pin);
 }
 
 extension ResistanceOnJson on Json {
@@ -49,7 +50,7 @@ extension ResistanceOnJson on Json {
 }
 
 extension ResistanceOnMap on Map<String, Object?> {
-  Resistance toResistance() => Resistance(
+  Resistance toResistance() => Resistance._(
     value: this['value']! as String,
     part: this['part']! as String,
     pin: this['pin']! as String,
@@ -71,7 +72,7 @@ extension ResistanceOnResistanceType on ResistanceType {
     final pin = partPin.substring(start, partPin.length - 1);
     assert(partPin[partPin.length - 1] == ')');
 
-    return Resistance(
+    return Resistance._(
       value: value,
       part: part,
       pin: pin,

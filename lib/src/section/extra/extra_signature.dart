@@ -3,62 +3,62 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/list_helper.dart';
-import '../../bytes_helper/string_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 
 sealed class ExtraSignature implements Bytesable, Jsonable {
-  const ExtraSignature(this.id);
+  const ExtraSignature(this._id);
 
-  final List<int> id;
-
-  @override
-  List<int> toBytes() => id;
+  final Bytes _id;
 
   @override
-  JsonList toJson() => id.toJsonList();
+  Bytes toBytes() => _id;
+
+  @override
+  JsonList toJson() => _id.toJsonList();
 
   @override
   bool operator ==(Object other) =>
     other is ExtraSignature &&
-    other.id == id;
+    other._id == _id;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => _id.hashCode;
 }
 
 final class Signature1 extends ExtraSignature {
-  const Signature1(super.id);
+  const Signature1(super._id);
 
   @override
   bool operator ==(Object other) =>
     other is Signature1 &&
-    other.id == id;
+    other._id == _id;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => _id.hashCode;
 }
 
 final class Signature2 extends ExtraSignature {
-  const Signature2(super.id);
+  const Signature2(super._id);
 
   @override
   bool operator ==(Object other) =>
     other is Signature2 &&
-    other.id == id;
+    other._id == _id;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => _id.hashCode;
 }
 
 final class InvalidExtraSignatureException implements Exception {}
 
-extension ExtraSignatureOnList on List<int> {
+extension ExtraSignatureOnBytes on Bytes {
   static const _marker = 'v6v6555v6v6';
 
   int signaturePosition() => _findMarker(
     this,
-    _marker.toString8List(),
+    _marker.toBytes(),
   );
 
   ExtraSignature toExtraSignature() {
@@ -76,7 +76,7 @@ extension ExtraSignatureOnList on List<int> {
     throw InvalidExtraSignatureException();
   }
 
-  int _findMarker(List<int> content, List<int> marker) {
+  int _findMarker(Bytes content, Bytes marker) {
     for (var i = 0; i <= content.length - marker.length; i++) {
       var found = true;
 

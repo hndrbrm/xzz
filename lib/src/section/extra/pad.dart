@@ -3,33 +3,34 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/list_helper.dart';
-import '../../serializable/byteable.dart';
+import '../../serializable/bytes.dart';
+import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 import 'diode.dart';
 
 final class Pad implements Bytesable, Jsonable {
-  const Pad._(this.diodes);
+  const Pad._(this._diodes);
 
-  final List<Diode> diodes;
-
-  @override
-  List<int> toBytes() => toJson().toBytes();
+  final List<Diode> _diodes;
 
   @override
-  JsonList toJson() => diodes
+  Bytes toBytes() => toJson().toBytes();
+
+  @override
+  JsonList toJson() => _diodes
     .map((e) => e.toJson())
     .toJsonList();
 
   @override
   bool operator ==(Object other) =>
     other is Pad &&
-    listEqual(other.diodes, diodes);
+    listEqual(other._diodes, _diodes);
 
   @override
-  int get hashCode => Object.hashAll(diodes);
+  int get hashCode => Object.hashAll(_diodes);
 }
 
-extension PadMap on List<Object?> {
+extension PadOnList on List<Object?> {
   Pad toPad() => Pad._(
     map((e) => e! as Map<String, Object?>)
       .map((e) => e.toDiode())
