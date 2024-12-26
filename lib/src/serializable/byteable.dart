@@ -4,12 +4,19 @@
 
 import 'jsonable.dart';
 
-class Bytesable {
-  Bytesable(this._toBytes);
+class Bytesable with BytesableMixin {
+  const Bytesable([ this._toBytes ]);
 
-  final List<int> Function() _toBytes;
+  @override
+  final List<int> Function()? _toBytes;
+}
 
-  List<int> toBytes() => _toBytes();
+mixin BytesableMixin {
+  List<int> Function()? get _toBytes;
+
+  List<int> toBytes() =>
+    _toBytes?.call() ??
+    (throw UnimplementedError('$runtimeType'));
 }
 
 extension ByteableList on List<int> {

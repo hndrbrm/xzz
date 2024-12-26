@@ -5,12 +5,11 @@
 import '../../../bytes_helper/list_helper.dart';
 import '../../../serializable/byteable.dart';
 import '../../../serializable/jsonable.dart';
-import '../../../serializable/serializable.dart';
 import '../../packet/bytesable_packet.dart';
 import '../../packet/id_packet.dart';
 import 'segment.dart';
 
-final class SegmentPacket extends IdPacket implements Serializable {
+final class SegmentPacket extends IdPacket implements Bytesable, Jsonable {
   const SegmentPacket._({
     required super.id,
     required super.content,

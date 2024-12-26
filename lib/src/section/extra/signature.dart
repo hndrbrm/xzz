@@ -2,13 +2,12 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
 import '../../bytes_helper/string_helper.dart';
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 
-sealed class Signature implements Serializable {
+sealed class Signature implements Bytesable, Jsonable {
   const Signature(this.id);
 
   final List<int> id;
@@ -71,9 +70,9 @@ extension SignatureList on List<int> {
 
     if (id.toString8() == _marker) {
       if (this[length] == 0x0a) {
-        return Signature2([ ...id, 0x0a ]);
+        return Signature1([ ...id, 0x0a ]);
       } else {
-        return Signature1(id);
+        return Signature2(id);
       }
     }
 

@@ -5,11 +5,11 @@
 import '../../../bytes_helper/int_helper.dart';
 import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
+import '../../../serializable/byteable.dart';
 import '../../../serializable/jsonable.dart';
-import '../../../serializable/serializable.dart';
 import '../../packet/string_packet.dart';
 
-final class Image implements Serializable {
+final class Image implements Bytesable, Jsonable {
   const Image._({
     required this.id,
     required this.index,

@@ -5,10 +5,10 @@
 import '../../bytes_helper/iterator_helper.dart';
 import '../../bytes_helper/list_helper.dart';
 import '../../bytes_helper/string_helper.dart';
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 
-final class Signature implements Serializable {
+final class Signature implements Bytesable, Jsonable {
   const Signature._(this.id);
 
   final String id;

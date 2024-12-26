@@ -6,10 +6,10 @@ import '../../../bytes_helper/int_helper.dart';
 import '../../../bytes_helper/iterator_helper.dart';
 import '../../../bytes_helper/list_helper.dart';
 import '../../../bytes_helper/string_helper.dart';
+import '../../../serializable/byteable.dart';
 import '../../../serializable/jsonable.dart';
-import '../../../serializable/serializable.dart';
 
-final class Net implements Serializable {
+final class Net implements Bytesable, Jsonable {
   const Net._({
     required this.index,
     required this.name,

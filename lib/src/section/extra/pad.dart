@@ -3,11 +3,11 @@
 // by a BSD-style license that can be found in the LICENSE file.
 
 import '../../bytes_helper/list_helper.dart';
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 import 'diode.dart';
 
-final class Pad implements Serializable {
+final class Pad implements Bytesable, Jsonable {
   const Pad._(this.diodes);
 
   final List<Diode> diodes;

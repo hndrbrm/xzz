@@ -6,12 +6,11 @@ import 'dart:collection';
 
 import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 import 'length_packet.dart';
 
-class BytesablePacket<T extends Serializable>
+class BytesablePacket<T>
 with IterableMixin<T>
-implements Serializable
+implements Bytesable, Jsonable
 {
   const BytesablePacket(this.whole);
 
@@ -23,17 +22,18 @@ implements Serializable
   @override
   List<int> toBytes() => [
     for (final each in whole)
-    ...each.toBytes(),
+    ...(each as Bytesable).toBytes(),
   ].toBytesable().toLengthPacket().toBytes();
 
   @override
   JsonList toJson() => whole
+    .map((e) => e as Jsonable)
     .map((e) => e.toJson())
     .toJsonList();
 }
 
 extension BytesableIterator on Iterator<int> {
-  BytesablePacket<T> toByteablePacket<T extends Serializable>(T Function(Iterator<int> iterator) debyte) {
+  BytesablePacket<T> toByteablePacket<T extends Bytesable>(T Function(Iterator<int> iterator) debyte) {
     final packet = toLengthPacket()!.content.toBytes();
     final packetIterator = packet.iterator;
 
@@ -50,7 +50,7 @@ extension BytesableIterator on Iterator<int> {
 }
 
 extension BytesablePacketMap on Map<String, Object?> {
-  BytesablePacket<T> toByteablePacket<T extends Serializable>() {
+  BytesablePacket<T> toByteablePacket<T>() {
     final whole = this['whole']! as List<T>;
     return BytesablePacket<T>(whole);
   }

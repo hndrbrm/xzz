@@ -2,14 +2,14 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
-import 'string_type.dart';
+import 'text_type.dart';
 
-final class Title implements Serializable {
+final class Title implements Bytesable, Jsonable {
   const Title._(this.title);
 
-  final StringType title;
+  final TextType title;
 
   @override
   List<int> toBytes() => title.toBytes();
@@ -27,7 +27,7 @@ final class Title implements Serializable {
 }
 
 extension TitleIterator on Iterator<int> {
-  Title toTitle() => Title._(toStringType());
+  Title toTitle() => Title._(toTextType());
 }
 
 extension TitleList on List<int> {

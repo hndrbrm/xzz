@@ -2,10 +2,10 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 
-final class Diode implements Serializable {
+final class Diode implements Bytesable, Jsonable {
   const Diode._({
     required this.name,
     required this.value,

@@ -6,12 +6,19 @@ import 'dart:convert';
 
 import '../bytes_helper/string_helper.dart';
 
-class Jsonable {
-  Jsonable._(this._toJson);
+class Jsonable with JsonableMixin {
+  const Jsonable._([ this._toJson ]);
 
-  final Json Function() _toJson;
+  @override
+  final Json Function()? _toJson;
+}
 
-  Json toJson() => _toJson();
+mixin JsonableMixin {
+  Json Function()? get _toJson;
+
+  Json toJson() =>
+    _toJson?.call() ??
+    (throw UnimplementedError('$runtimeType'));
 }
 
 sealed class Json {
@@ -19,41 +26,41 @@ sealed class Json {
 }
 
 final class JsonMap implements Json {
-  const JsonMap._(this.value);
+  const JsonMap._(this._value);
 
-  final Map<String, Json> value;
+  final Map<String, Json> _value;
 
   @override
   Map<String, Object?> toObject() =>
-    value.map((k, v) => MapEntry(k, v.toObject()));
+    _value.map((k, v) => MapEntry(k, v.toObject()));
 }
 
 final class JsonList implements Json {
-  const JsonList._(this.value);
+  const JsonList._(this._value);
 
-  final Iterable<Json> value;
+  final Iterable<Json> _value;
 
   @override
   List<Object?> toObject() =>
-    value.map((e) => e.toObject()).toList();
+    _value.map((e) => e.toObject()).toList();
 }
 
 final class JsonNum implements Json {
-  const JsonNum._(this.value);
+  const JsonNum._(this._value);
 
-  final num value;
+  final num _value;
 
   @override
-  num toObject() => value;
+  num toObject() => _value;
 }
 
 final class JsonString implements Json {
-  const JsonString._(this.value);
+  const JsonString._(this._value);
 
-  final String value;
+  final String _value;
 
   @override
-  String toObject() => value;
+  String toObject() => _value;
 }
 
 final class JsonNull implements Json {
@@ -64,12 +71,12 @@ final class JsonNull implements Json {
 }
 
 final class InvalidJsonException implements Exception {
-  const InvalidJsonException(this.id);
+  const InvalidJsonException(this._id);
 
-  final Type id;
+  final Type _id;
 
   @override
-  String toString() => "Invalid Json '$id'";
+  String toString() => "Invalid Json '$_id'";
 }
 
 extension JsonableMap on Json {

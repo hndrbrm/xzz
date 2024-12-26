@@ -5,11 +5,11 @@
 import '../../../../bytes_helper/int_helper.dart';
 import '../../../../bytes_helper/iterator_helper.dart';
 import '../../../../bytes_helper/list_helper.dart';
+import '../../../../serializable/byteable.dart';
 import '../../../../serializable/jsonable.dart';
-import '../../../../serializable/serializable.dart';
 import '../../../packet/string_packet.dart';
 
-sealed class Component implements Serializable {
+sealed class Component implements Bytesable, Jsonable {
   const Component();
 
   int get type;

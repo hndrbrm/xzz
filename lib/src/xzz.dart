@@ -5,10 +5,10 @@
 import 'bytes_helper/list_helper.dart';
 import 'section/extra/extra.dart';
 import 'section/pcb/pcb.dart';
+import 'serializable/byteable.dart';
 import 'serializable/jsonable.dart';
-import 'serializable/serializable.dart';
 
-final class Xzz implements Serializable {
+final class Xzz implements Bytesable, Jsonable {
   const Xzz._({
     required this.pcb,
     this.extra,

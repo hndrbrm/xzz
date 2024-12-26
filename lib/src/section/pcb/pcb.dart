@@ -2,15 +2,15 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 import 'image/images.dart';
 import 'net/nets.dart';
 import 'offset.dart';
 import 'segment/segments.dart';
 import 'signature.dart';
 
-final class Pcb implements Serializable {
+final class Pcb implements Bytesable, Jsonable {
   const Pcb._({
     required this.signature,
     required this.offset,

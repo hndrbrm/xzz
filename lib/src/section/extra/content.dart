@@ -2,11 +2,11 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
 import 'pad.dart';
 
-final class Content implements Serializable {
+final class Content implements Bytesable, Jsonable {
   const Content._({
     required this.reference,
     required this.pad,

@@ -2,15 +2,13 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/list_helper.dart';
+import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
-import '../../serializable/serializable.dart';
-import 'pad.dart';
 import 'part.dart';
 import 'signature.dart';
 import 'title.dart';
 
-final class Extra implements Serializable {
+final class Extra implements Bytesable, Jsonable {
   const Extra._({
     required this.signature,
     required this.title,
@@ -55,18 +53,36 @@ extension ExtraList on List<int> {
     final signature = toSignature();
     final rest = sublist(signature.toBytes().length).iterator;
 
+    final title = rest.toTitle();
+    final part = switch (signature) {
+      Signature1() => rest.toPart1(),
+      Signature2() => rest.toPart2(),
+    };
+
     return Extra._(
       signature: signature,
-      title: rest.toTitle(),
-      part: rest.toPart(),
+      title: title,
+      part: part,
     );
   }
 }
 
 extension ExtraMap on Map<String, Object?> {
-  Extra toExtra() => Extra._(
-    signature: (this['signature']! as List<Object?>).toBytes().toSignature(),
-    title: (this['title']! as List<Object?>).toBytes().toTitle(),
-    part: (this['part']! as Map<String, Object?>).toPart(),
-  );
+  Extra toExtra() {
+    final signature = (this['signature']! as List<Object?>)
+      .toBytes()
+      .toSignature();
+
+    final partMap = this['part']! as Map<String, Object?>;
+    final part = switch (signature) {
+      Signature1() => partMap.toPart1(),
+      Signature2() => partMap.toPart2(),
+    };
+
+    return Extra._(
+      signature: signature,
+      title: (this['title']! as List<Object?>).toBytes().toTitle(),
+      part: part,
+    );
+  }
 }
