@@ -11,41 +11,44 @@ import 'title.dart';
 
 final class Extra implements Bytesable, Jsonable {
   const Extra._({
-    required this.signature,
-    required this.title,
-    required this.part,
-  });
+    required ExtraSignature signature,
+    required Title title,
+    required Part<dynamic> part,
+  })
+  : _signature = signature,
+    _title = title,
+    _part = part;
 
-  final ExtraSignature signature;
-  final Title title;
-  final Part part;
+  final ExtraSignature _signature;
+  final Title _title;
+  final Part _part;
 
   @override
   Bytes toBytes() => [
-    ...signature.toBytes(),
-    ...title.toBytes(),
-    ...part.toBytes(),
+    ..._signature.toBytes(),
+    ..._title.toBytes(),
+    ..._part.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'signature': signature.toJson(),
-    'title': title.toJson(),
-    'part': part.toJson(),
+    'signature': _signature.toJson(),
+    'title': _title.toJson(),
+    'part': _part.toJson(),
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Extra &&
-    other.signature == signature &&
-    other.title == title &&
-    other.part == part;
+    other._signature == _signature &&
+    other._title == _title &&
+    other._part == _part;
 
   @override
   int get hashCode => Object.hash(
-    signature,
-    title,
-    part,
+    _signature,
+    _title,
+    _part,
   );
 }
 

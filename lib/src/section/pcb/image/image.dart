@@ -11,59 +11,65 @@ import '../../packet/string_packet.dart';
 
 final class Image implements Bytesable, Jsonable {
   const Image._({
-    required this.id,
-    required this.index,
-    required this.flag,
-    required this.sizeX,
-    required this.sizeY,
-    required this.name,
-  });
+    required int id,
+    required int index,
+    required int flag,
+    required int sizeX,
+    required int sizeY,
+    required String name,
+  })
+  : _id = id,
+    _index = index,
+    _flag = flag,
+    _sizeX = sizeX,
+    _sizeY = sizeY,
+    _name = name;
 
-  final int id;
-  final int index;
-  final int flag;
-  final int sizeX;
-  final int sizeY;
-  final String name;
+  final int _id;
+  final int _index;
+  final int _flag;
+  final int _sizeX;
+  final int _sizeY;
+  final String _name;
 
   @override
   Bytes toBytes() => [
-    id,
-    index,
-    flag,
-    ...sizeX.toUint32List(),
-    ...sizeY.toUint32List(),
-    ...name.toStringPacket().toBytes(),
+    _id,
+    _index,
+    _flag,
+    ..._sizeX.toUint32List(),
+    ..._sizeY.toUint32List(),
+    ..._name.toStringPacket().toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'id': id,
-    'index': index,
-    'flag': flag,
-    'sizeX': sizeX,
-    'sizeY': sizeY,
-    'name': name,
+    'id': _id,
+    'index': _index,
+    'flag': _flag,
+    'sizeX': _sizeX,
+    'sizeY': _sizeY,
+    'name': _name,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Image &&
-    other.id == id &&
-    other.index == index &&
-    other.flag == flag &&
-    other.sizeX == sizeX &&
-    other.sizeY == sizeY &&
-    other.name == name;
+    other._id == _id &&
+    other._index == _index &&
+    other._flag == _flag &&
+    other._sizeX == _sizeX &&
+    other._sizeY == _sizeY &&
+    other._name == _name;
 
   @override
   int get hashCode => Object.hash(
-    id,
-    index,
-    flag,
-    sizeX,
-    sizeY,
-    name,
+    _id,
+    _index,
+    _flag,
+    _sizeX,
+    _sizeY,
+    _name,
   );
 }
 

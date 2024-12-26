@@ -46,12 +46,12 @@ final class SegmentPacket extends IdPacket implements Bytesable, Jsonable {
 }
 
 final class UnknownSegmentException implements Exception {
-  const UnknownSegmentException(this.id);
+  const UnknownSegmentException(this._id);
 
-  final int id;
+  final int _id;
 
   @override
-  String toString() => "Unknown Segment '$id'";
+  String toString() => "Unknown Segment '$_id'";
 }
 
 extension SegmentPacketOnIterator on Iterator<int> {

@@ -8,58 +8,63 @@ import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
 
-/// The offset of the section [boardOffset], [imageOffset], [netOffset] are
+/// The offset of the section [_boardOffset], [_imageOffset], [_netOffset] are
 /// relative to current section, means it need to add with 0x20 for the absolute
 /// offset.
 final class Offset implements Bytesable, Jsonable {
   const Offset._({
-    required this.unknown1,
-    required this.boardOffset,
-    required this.imageOffset,
-    required this.netOffset,
-    required this.unknown2,
-  });
+    required List<int> unknown1,
+    required int boardOffset,
+    required int imageOffset,
+    required int netOffset,
+    required List<int> unknown2,
+  })
+  : _unknown1 = unknown1,
+    _boardOffset = boardOffset,
+    _imageOffset = imageOffset,
+    _netOffset = netOffset,
+    _unknown2 = unknown2;
 
-  final Bytes unknown1;
-  final int boardOffset;
-  final int imageOffset;
-  final int netOffset;
-  final Bytes unknown2;
+  final Bytes _unknown1;
+  final int _boardOffset;
+  final int _imageOffset;
+  final int _netOffset;
+  final Bytes _unknown2;
 
   @override
   Bytes toBytes() => [
-    ...unknown1,
-    ...boardOffset.toUint32List(),
-    ...imageOffset.toUint32List(),
-    ...netOffset.toUint32List(),
-    ...unknown2,
+    ..._unknown1,
+    ..._boardOffset.toUint32List(),
+    ..._imageOffset.toUint32List(),
+    ..._netOffset.toUint32List(),
+    ..._unknown2,
   ];
 
   @override
   JsonMap toJson() => {
-    'unknown1': unknown1,
-    'boardOffset': boardOffset,
-    'imageOffset': imageOffset,
-    'netOffset': netOffset,
-    'unknown2': unknown2,
+    'unknown1': _unknown1,
+    'boardOffset': _boardOffset,
+    'imageOffset': _imageOffset,
+    'netOffset': _netOffset,
+    'unknown2': _unknown2,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Offset &&
-    listEqual(other.unknown1, unknown1) &&
-    other.boardOffset == boardOffset &&
-    other.imageOffset == imageOffset &&
-    other.netOffset == netOffset &&
-    listEqual(other.unknown2, unknown2);
+    listEqual(other._unknown1, _unknown1) &&
+    other._boardOffset == _boardOffset &&
+    other._imageOffset == _imageOffset &&
+    other._netOffset == _netOffset &&
+    listEqual(other._unknown2, _unknown2);
 
   @override
   int get hashCode => Object.hash(
-    Object.hashAll(unknown1),
-    boardOffset,
-    imageOffset,
-    netOffset,
-    Object.hashAll(unknown2),
+    Object.hashAll(_unknown1),
+    _boardOffset,
+    _imageOffset,
+    _netOffset,
+    Object.hashAll(_unknown2),
   );
 }
 

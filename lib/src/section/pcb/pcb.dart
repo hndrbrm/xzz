@@ -13,53 +13,58 @@ import 'segment/segments.dart';
 
 final class Pcb implements Bytesable, Jsonable {
   const Pcb._({
-    required this.signature,
-    required this.offset,
-    required this.segments,
-    required this.images,
-    required this.nets,
-  });
+    required PcbSignature signature,
+    required Offset offset,
+    required Segments segments,
+    required Images images,
+    required Nets nets,
+  })
+  : _signature = signature,
+    _offset = offset,
+    _segments = segments,
+    _images = images,
+    _nets = nets;
 
-  final PcbSignature signature;
-  final Offset offset;
-  final Segments segments;
-  final Images images;
-  final Nets nets;
+  final PcbSignature _signature;
+  final Offset _offset;
+  final Segments _segments;
+  final Images _images;
+  final Nets _nets;
 
   @override
   Bytes toBytes() => [
-    ...signature.toBytes(),
-    ...offset.toBytes(),
-    ...segments.toBytes(),
-    ...images.toBytes(),
-    ...nets.toBytes(),
+    ..._signature.toBytes(),
+    ..._offset.toBytes(),
+    ..._segments.toBytes(),
+    ..._images.toBytes(),
+    ..._nets.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'signature': signature.toJson(),
-    'offset': offset.toJson(),
-    'segments': segments.toJson(),
-    'images': images.toJson(),
-    'nets': nets.toJson(),
+    'signature': _signature.toJson(),
+    'offset': _offset.toJson(),
+    'segments': _segments.toJson(),
+    'images': _images.toJson(),
+    'nets': _nets.toJson(),
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Pcb &&
-    other.signature == signature &&
-    other.offset == offset &&
-    other.segments == segments &&
-    other.images == images &&
-    other.nets == nets;
+    other._signature == _signature &&
+    other._offset == _offset &&
+    other._segments == _segments &&
+    other._images == _images &&
+    other._nets == _nets;
 
   @override
   int get hashCode => Object.hash(
-    signature,
-    offset,
-    segments,
-    images,
-    nets,
+    _signature,
+    _offset,
+    _segments,
+    _images,
+    _nets,
   );
 }
 

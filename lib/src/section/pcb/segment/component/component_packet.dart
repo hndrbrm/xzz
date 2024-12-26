@@ -42,12 +42,12 @@ final class ComponentPacket extends IdPacket implements Jsonable {
 }
 
 final class UnknownComponentException implements Exception {
-  const UnknownComponentException(this.id);
+  const UnknownComponentException(this._id);
 
-  final int id;
+  final int _id;
 
   @override
-  String toString() => "Unknown Component '$id'";
+  String toString() => "Unknown Component '$_id'";
 }
 
 extension ComponentPacketOnComponent on Component {

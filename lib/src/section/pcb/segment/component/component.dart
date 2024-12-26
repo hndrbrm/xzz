@@ -16,9 +16,9 @@ sealed class Component implements Bytesable, Jsonable {
 }
 
 final class UnknownComponent extends Component {
-  const UnknownComponent._(this.raw);
+  const UnknownComponent._(this._raw);
 
-  final Bytes raw;
+  final Bytes _raw;
 
   static const id = 1;
 
@@ -26,24 +26,24 @@ final class UnknownComponent extends Component {
   int get type => id;
 
   @override
-  Bytes toBytes() => raw;
+  Bytes toBytes() => _raw;
 
   @override
-  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+  JsonMap toJson() => { 'raw': _raw }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is UnknownComponent &&
-    listEqual(other.raw, raw);
+    listEqual(other._raw, _raw);
 
   @override
-  int get hashCode => Object.hashAll(raw);
+  int get hashCode => Object.hashAll(_raw);
 }
 
 final class LineComponent extends Component {
-  const LineComponent._(this.raw);
+  const LineComponent._(this._raw);
 
-  final Bytes raw;
+  final Bytes _raw;
 
   static const id = 5;
 
@@ -51,24 +51,24 @@ final class LineComponent extends Component {
   int get type => id;
 
   @override
-  Bytes toBytes() => raw;
+  Bytes toBytes() => _raw;
 
   @override
-  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+  JsonMap toJson() => { 'raw': _raw }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is LineComponent &&
-    listEqual(other.raw, raw);
+    listEqual(other._raw, _raw);
 
   @override
-  int get hashCode => Object.hashAll(raw);
+  int get hashCode => Object.hashAll(_raw);
 }
 
 final class LabelComponent extends Component {
-  const LabelComponent._(this.raw);
+  const LabelComponent._(this._raw);
 
-  final Bytes raw;
+  final Bytes _raw;
 
   static const id = 6;
 
@@ -76,40 +76,48 @@ final class LabelComponent extends Component {
   int get type => id;
 
   @override
-  Bytes toBytes() => raw;
+  Bytes toBytes() => _raw;
 
   @override
-  JsonMap toJson() => { 'raw': raw }.toJsonMap();
+  JsonMap toJson() => { 'raw': _raw }.toJsonMap();
   
   @override
   bool operator ==(Object other) =>
     other is LabelComponent &&
-    listEqual(other.raw, raw);
+    listEqual(other._raw, _raw);
 
   @override
-  int get hashCode => Object.hashAll(raw);
+  int get hashCode => Object.hashAll(_raw);
 }
 
 final class PinComponent extends Component {
   const PinComponent._({
-    required this.unknown1,
-    required this.x,
-    required this.y,
-    required this.unknown2,
-    required this.name,
-    required this.unknown3,
-    required this.netIndex,
-    required this.unknown4,
-  });
+    required int unknown1,
+    required int x,
+    required int y,
+    required List<int> unknown2,
+    required String name,
+    required List<int> unknown3,
+    required int netIndex,
+    required List<int> unknown4,
+  })
+  : _unknown1 = unknown1,
+    _x = x,
+    _y = y,
+    _unknown2 = unknown2,
+    _name = name,
+    _unknown3 = unknown3,
+    _netIndex = netIndex,
+    _unknown4 = unknown4;
 
-  final int unknown1;
-  final int x;
-  final int y;
-  final Bytes unknown2;
-  final String name;
-  final Bytes unknown3;
-  final int netIndex;
-  final Bytes unknown4;
+  final int _unknown1;
+  final int _x;
+  final int _y;
+  final Bytes _unknown2;
+  final String _name;
+  final Bytes _unknown3;
+  final int _netIndex;
+  final Bytes _unknown4;
 
   static const id = 9;
 
@@ -118,50 +126,50 @@ final class PinComponent extends Component {
 
   @override
   Bytes toBytes() => [
-    ...unknown1.toUint32List(),
-    ...x.toUint32List(),
-    ...y.toUint32List(),
-    ...unknown2,
-    ...name.toStringPacket().toBytes(),
-    ...unknown3,
-    ...netIndex.toUint32List(),
-    ...unknown4,
+    ..._unknown1.toUint32List(),
+    ..._x.toUint32List(),
+    ..._y.toUint32List(),
+    ..._unknown2,
+    ..._name.toStringPacket().toBytes(),
+    ..._unknown3,
+    ..._netIndex.toUint32List(),
+    ..._unknown4,
   ];
 
   @override
   JsonMap toJson() => {
-    'unknown1': unknown1,
-    'x': x,
-    'y': y,
-    'unknown2': unknown2,
-    'name': name,
-    'unknown3': unknown3,
-    'netIndex': netIndex,
-    'unknown4': unknown4,
+    'unknown1': _unknown1,
+    'x': _x,
+    'y': _y,
+    'unknown2': _unknown2,
+    'name': _name,
+    'unknown3': _unknown3,
+    'netIndex': _netIndex,
+    'unknown4': _unknown4,
   }.toJsonMap();
   
   @override
   bool operator ==(Object other) =>
     other is PinComponent &&
-    other.unknown1 == unknown1 &&
-    other.x == x &&
-    other.y == y &&
-    listEqual(other.unknown2, unknown2) &&
-    other.name == name &&
-    listEqual(other.unknown3, unknown3) &&
-    other.netIndex == netIndex &&
-    listEqual(other.unknown4, unknown4);
+    other._unknown1 == _unknown1 &&
+    other._x == _x &&
+    other._y == _y &&
+    listEqual(other._unknown2, _unknown2) &&
+    other._name == _name &&
+    listEqual(other._unknown3, _unknown3) &&
+    other._netIndex == _netIndex &&
+    listEqual(other._unknown4, _unknown4);
 
   @override
   int get hashCode => Object.hash(
-    unknown1,
-    x,
-    y,
-    Object.hashAll(unknown2),
-    name,
-    Object.hashAll(unknown3),
-    netIndex,
-    Object.hashAll(unknown4),
+    _unknown1,
+    _x,
+    _y,
+    Object.hashAll(_unknown2),
+    _name,
+    Object.hashAll(_unknown3),
+    _netIndex,
+    Object.hashAll(_unknown4),
   );
 }
 

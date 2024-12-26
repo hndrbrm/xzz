@@ -21,6 +21,8 @@ void main() {
   test('PcbSignature', () {
     final signature = noExtra.pcbSignature.toPcbSignature();
     expect(signature.toBytes(), equals(noExtra.pcbSignature));
+
+    print(signature.toJson().toObject());
   });
 
   test('Offset', () {

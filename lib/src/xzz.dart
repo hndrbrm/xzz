@@ -10,37 +10,39 @@ import 'serializable/jsonable.dart';
 
 final class Xzz implements Bytesable, Jsonable {
   const Xzz._({
-    required this.pcb,
-    this.extra,
-  });
+    required Pcb pcb,
+    Extra? extra,
+  })
+  : _pcb = pcb,
+    _extra = extra;
 
-  final Pcb pcb;
-  final Extra? extra;
+  final Pcb _pcb;
+  final Extra? _extra;
 
   @override
   Bytes toBytes() => [
-    ...pcb.toBytes(),
-    if (extra != null)
-    ...extra!.toBytes(),
+    ..._pcb.toBytes(),
+    if (_extra != null)
+    ..._extra!.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'pcb': pcb.toJson(),
-    if (extra != null)
-    'extra': extra!.toJson(),
+    'pcb': _pcb.toJson(),
+    if (_extra != null)
+    'extra': _extra!.toJson(),
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Xzz &&
-    other.pcb == pcb &&
-    other.extra == extra;
+    other._pcb == _pcb &&
+    other._extra == _extra;
 
   @override
   int get hashCode => Object.hash(
-    pcb,
-    extra,
+    _pcb,
+    _extra,
   );
 }
 

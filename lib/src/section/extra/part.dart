@@ -13,28 +13,28 @@ import 'resistance_type.dart';
 import 'text_type.dart';
 
 sealed class Part<T> implements Bytesable, Jsonable {
-  const Part(this.contents);
+  const Part(this._contents);
 
-  final List<T> contents;
+  final List<T> _contents;
 
   @override
   bool operator ==(Object other) =>
     other is Part &&
-    listEqual(other.contents, contents);
+    listEqual(other._contents, _contents);
 
   @override
-  int get hashCode => Object.hashAll(contents);
+  int get hashCode => Object.hashAll(_contents);
 }
 
 final class Part1<Content> extends Part {
-  const Part1(super.contents);
+  const Part1(super._contents);
 
   @override
   Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
-    'part': contents
+    'part': _contents
       .map((e) => e as Jsonable)
       .map((e) => e.toJson())
       .toList()
@@ -43,24 +43,24 @@ final class Part1<Content> extends Part {
   @override
   bool operator ==(Object other) =>
     other is Part1 &&
-    listEqual(other.contents, contents);
+    listEqual(other._contents, _contents);
 
   @override
-  int get hashCode => Object.hashAll(contents);
+  int get hashCode => Object.hashAll(_contents);
 }
 
 final class Part2<ResistanceType> extends Part {
-  const Part2(super.contents);
+  const Part2(super._contents);
 
   @override
   Bytes toBytes() => <int>[
-    for (final content in contents)
+    for (final content in _contents)
     ...content.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'part': contents
+    'part': _contents
       .map((e) => e as Jsonable)
       .map((e) => e.toJson())
       .toList()
@@ -69,10 +69,10 @@ final class Part2<ResistanceType> extends Part {
   @override
   bool operator ==(Object other) =>
     other is Part2 &&
-    listEqual(other.contents, contents);
+    listEqual(other._contents, _contents);
 
   @override
-  int get hashCode => Object.hashAll(contents);
+  int get hashCode => Object.hashAll(_contents);
 }
 
 extension PartOnBytes on Bytes {

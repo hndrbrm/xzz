@@ -8,32 +8,34 @@ import '../../serializable/jsonable.dart';
 
 final class Diode implements Bytesable, Jsonable {
   const Diode._({
-    required this.name,
-    required this.value,
-  });
+    required String name,
+    required String value,
+  })
+  : _name = name,
+    _value = value;
 
-  final String name;
-  final String value;
+  final String _name;
+  final String _value;
 
   @override
   Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
-    'name': name,
-    'diode': value,
+    'name': _name,
+    'diode': _value,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Diode &&
-    other.name == name &&
-    other.value == value;
+    other._name == _name &&
+    other._value == _value;
 
   @override
   int get hashCode => Object.hash(
-    name,
-    value,
+    _name,
+    _value,
   );
 }
 

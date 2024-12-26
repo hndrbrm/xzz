@@ -10,36 +10,38 @@ import '../../../serializable/jsonable.dart';
 
 final class Net implements Bytesable, Jsonable {
   const Net._({
-    required this.index,
-    required this.name,
-  });
+    required int index,
+    required String name,
+  })
+  : _index = index,
+    _name = name;
 
-  final int index;
-  final String name;
+  final int _index;
+  final String _name;
 
   @override
   Bytes toBytes() => [
-    ...(name.length + 8).toUint32List(),
-    ...index.toUint32List(),
-    ...name.toBytes(),
+    ...(_name.length + 8).toUint32List(),
+    ..._index.toUint32List(),
+    ..._name.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'index': index,
-    'name': name,
+    'index': _index,
+    'name': _name,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Net &&
-    other.index == index &&
-    other.name == name;
+    other._index == _index &&
+    other._name == _name;
 
   @override
   int get hashCode => Object.hash(
-    index,
-    name,
+    _index,
+    _name,
   );
 }
 

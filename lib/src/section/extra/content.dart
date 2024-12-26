@@ -9,32 +9,34 @@ import 'pad.dart';
 
 final class Content implements Bytesable, Jsonable {
   const Content._({
-    required this.reference,
-    required this.pad,
-  });
+    required String reference,
+    required Pad pad,
+  })
+  : _reference = reference,
+    _pad = pad;
 
-  final String reference;
-  final Pad pad;
+  final String _reference;
+  final Pad _pad;
 
   @override
   Bytes toBytes() => toJson().toBytes();
 
   @override
   JsonMap toJson() => {
-    'reference': reference,
-    'pad': pad.toJson(),
+    'reference': _reference,
+    'pad': _pad.toJson(),
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is Content &&
-    other.reference == reference &&
-    other.pad == pad;
+    other._reference == _reference &&
+    other._pad == _pad;
 
   @override
   int get hashCode => Object.hash(
-    reference,
-    pad,
+    _reference,
+    _pad,
   );
 }
 

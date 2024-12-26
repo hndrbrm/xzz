@@ -20,7 +20,7 @@ sealed class Segment implements Bytesable, Jsonable {
   int get type;
 }
 
-/// Possible [layer] value:
+/// Possible [_layer] value:
 /// * 1 ~ 16  (Trace Layers)
 ///   Used in order excluding last which always uses 16, ie 1, 2, 3, 4, 16.
 /// * 17      (Silkscreen)
@@ -28,24 +28,32 @@ sealed class Segment implements Bytesable, Jsonable {
 /// * 28      (Board edges
 final class ArcSegment extends Segment {
   const ArcSegment._({
-    required this.layer,
-    required this.x,
-    required this.y,
-    required this.r,
-    required this.startAngle,
-    required this.endAngle,
-    required this.scale,
-    required this.unknown,
-  });
+    required int layer,
+    required int x,
+    required int y,
+    required int r,
+    required int startAngle,
+    required int endAngle,
+    required int scale,
+    required int unknown,
+  })
+  : _layer = layer,
+    _x = x,
+    _y = y,
+    _r = r,
+    _startAngle = startAngle,
+    _endAngle = endAngle,
+    _scale = scale,
+    _unknown = unknown;
 
-  final int layer;
-  final int x;
-  final int y;
-  final int r;
-  final int startAngle;
-  final int endAngle;
-  final int scale;
-  final int unknown;
+  final int _layer;
+  final int _x;
+  final int _y;
+  final int _r;
+  final int _startAngle;
+  final int _endAngle;
+  final int _scale;
+  final int _unknown;
 
   static const id = 1;
 
@@ -54,73 +62,81 @@ final class ArcSegment extends Segment {
 
   @override
   Bytes toBytes() => [
-    ...layer.toUint32List(),
-    ...x.toUint32List(),
-    ...y.toUint32List(),
-    ...r.toInt32List(),
-    ...startAngle.toInt32List(),
-    ...endAngle.toInt32List(),
-    ...scale.toInt32List(),
-    ...unknown.toInt32List(),
+    ..._layer.toUint32List(),
+    ..._x.toUint32List(),
+    ..._y.toUint32List(),
+    ..._r.toInt32List(),
+    ..._startAngle.toInt32List(),
+    ..._endAngle.toInt32List(),
+    ..._scale.toInt32List(),
+    ..._unknown.toInt32List(),
   ];
 
   @override
   JsonMap toJson() => {
-    'layer': layer,
-    'x': x,
-    'y': y,
-    'r': r,
-    'startAngle': startAngle,
-    'endAngle': endAngle,
-    'scale': scale,
-    'unknown': unknown,
+    'layer': _layer,
+    'x': _x,
+    'y': _y,
+    'r': _r,
+    'startAngle': _startAngle,
+    'endAngle': _endAngle,
+    'scale': _scale,
+    'unknown': _unknown,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is ArcSegment &&
-    other.layer == layer &&
-    other.x == x &&
-    other.y == y &&
-    other.r == r &&
-    other.startAngle == startAngle &&
-    other.endAngle == endAngle &&
-    other.scale == scale &&
-    other.unknown == unknown;
+    other._layer == _layer &&
+    other._x == _x &&
+    other._y == _y &&
+    other._r == _r &&
+    other._startAngle == _startAngle &&
+    other._endAngle == _endAngle &&
+    other._scale == _scale &&
+    other._unknown == _unknown;
 
   @override
   int get hashCode => Object.hash(
-    layer,
-    x,
-    y,
-    r,
-    startAngle,
-    endAngle,
-    scale,
-    unknown,
+    _layer,
+    _x,
+    _y,
+    _r,
+    _startAngle,
+    _endAngle,
+    _scale,
+    _unknown,
   );
 }
 
 final class ViaSegment extends Segment {
   ViaSegment._({
-    required this.x,
-    required this.y,
-    required this.layerARadius,
-    required this.layerBRadius,
-    required this.layerAIndex,
-    required this.layerBIndex,
-    required this.netIndex,
-    this.name,
-  });
+    required int x,
+    required int y,
+    required int layerARadius,
+    required int layerBRadius,
+    required int layerAIndex,
+    required int layerBIndex,
+    required int netIndex,
+    String? name,
+  })
+  : _x = x,
+    _y = y,
+    _layerARadius = layerARadius,
+    _layerBRadius = layerBRadius,
+    _layerAIndex = layerAIndex,
+    _layerBIndex = layerBIndex,
+    _netIndex = netIndex,
+    _name = name;
   
-  final int x;
-  final int y;
-  final int layerARadius;
-  final int layerBRadius;
-  final int layerAIndex;
-  final int layerBIndex;
-  final int netIndex;
-  final String? name;
+  final int _x;
+  final int _y;
+  final int _layerARadius;
+  final int _layerBRadius;
+  final int _layerAIndex;
+  final int _layerBIndex;
+  final int _netIndex;
+  final String? _name;
 
   static const id = 2;
 
@@ -129,77 +145,86 @@ final class ViaSegment extends Segment {
 
   @override
   Bytes toBytes() => [
-    ...x.toInt32List(),
-    ...y.toInt32List(),
-    ...layerARadius.toInt32List(),
-    ...layerBRadius.toInt32List(),
-    ...layerAIndex.toUint32List(),
-    ...layerBIndex.toUint32List(),
-    ...netIndex.toUint32List(),
-    if (name != null)
-    ...name!.toStringPacket().toBytes(),
+    ..._x.toInt32List(),
+    ..._y.toInt32List(),
+    ..._layerARadius.toInt32List(),
+    ..._layerBRadius.toInt32List(),
+    ..._layerAIndex.toUint32List(),
+    ..._layerBIndex.toUint32List(),
+    ..._netIndex.toUint32List(),
+    if (_name != null)
+    ..._name.toStringPacket().toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'x': x,
-    'y': y,
-    'layerARadius': layerARadius,
-    'layerBRadius': layerBRadius,
-    'layerAIndex': layerAIndex,
-    'layerBIndex': layerBIndex,
-    'netIndex': netIndex,
-    if (name != null)
-    'name': name,
+    'x': _x,
+    'y': _y,
+    'layerARadius': _layerARadius,
+    'layerBRadius': _layerBRadius,
+    'layerAIndex': _layerAIndex,
+    'layerBIndex': _layerBIndex,
+    'netIndex': _netIndex,
+    if (_name != null)
+    'name': _name,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is ViaSegment &&
-    other.x == x &&
-    other.y == y &&
-    other.layerARadius == layerARadius &&
-    other.layerBRadius == layerBRadius &&
-    other.layerAIndex == layerAIndex &&
-    other.layerBIndex == layerBIndex &&
-    other.netIndex == netIndex &&
-    other.name == name;
+    other._x == _x &&
+    other._y == _y &&
+    other._layerARadius == _layerARadius &&
+    other._layerBRadius == _layerBRadius &&
+    other._layerAIndex == _layerAIndex &&
+    other._layerBIndex == _layerBIndex &&
+    other._netIndex == _netIndex &&
+    other._name == _name;
 
   @override
   int get hashCode => Object.hash(
-    x,
-    y,
-    layerARadius,
-    layerBRadius,
-    layerAIndex,
-    layerBIndex,
-    netIndex,
-    name,
+    _x,
+    _y,
+    _layerARadius,
+    _layerBRadius,
+    _layerAIndex,
+    _layerBIndex,
+    _netIndex,
+    _name,
   );
 }
 
 final class UnknownSegment extends Segment {
   const UnknownSegment._({
-    required this.unknown1,
-    required this.centerX,
-    required this.centerY,
-    required this.bottomLeftX,
-    required this.bottomLeftY,
-    required this.topRightX,
-    required this.topRightY,
-    required this.unknown2,
-    required this.unknown3,
-  });
+    required int unknown1,
+    required int centerX,
+    required int centerY,
+    required int bottomLeftX,
+    required int bottomLeftY,
+    required int topRightX,
+    required int topRightY,
+    required int unknown2,
+    required int unknown3,
+  })
+  : _unknown1 = unknown1,
+    _centerX = centerX,
+    _centerY = centerY,
+    _bottomLeftX = bottomLeftX,
+    _bottomLeftY = bottomLeftY,
+    _topRightX = topRightX,
+    _topRightY = topRightY,
+    _unknown2 = unknown2,
+    _unknown3 = unknown3;
 
-  final int unknown1;
-  final int centerX;
-  final int centerY;
-  final int bottomLeftX;
-  final int bottomLeftY;
-  final int topRightX;
-  final int topRightY;
-  final int unknown2;
-  final int unknown3;
+  final int _unknown1;
+  final int _centerX;
+  final int _centerY;
+  final int _bottomLeftX;
+  final int _bottomLeftY;
+  final int _topRightX;
+  final int _topRightY;
+  final int _unknown2;
+  final int _unknown3;
 
   static const id = 3;
 
@@ -208,75 +233,82 @@ final class UnknownSegment extends Segment {
 
   @override
   Bytes toBytes() => [
-    ...unknown1.toUint32List(),
-    ...centerX.toUint32List(),
-    ...centerY.toUint32List(),
-    ...bottomLeftX.toUint32List(),
-    ...bottomLeftY.toUint32List(),
-    ...topRightX.toUint32List(),
-    ...topRightY.toUint32List(),
-    ...unknown2.toUint32List(),
-    ...unknown3.toUint32List(),
+    ..._unknown1.toUint32List(),
+    ..._centerX.toUint32List(),
+    ..._centerY.toUint32List(),
+    ..._bottomLeftX.toUint32List(),
+    ..._bottomLeftY.toUint32List(),
+    ..._topRightX.toUint32List(),
+    ..._topRightY.toUint32List(),
+    ..._unknown2.toUint32List(),
+    ..._unknown3.toUint32List(),
   ];
 
   @override
   JsonMap toJson() => {
-    'unknown1': unknown1,
-    'centerX': centerX,
-    'centerY': centerY,
-    'bottomLeftX': bottomLeftX,
-    'bottomLeftY': bottomLeftY,
-    'topRightX': topRightX,
-    'topRightY': topRightY,
-    'unknown2': unknown2,
-    'unknown3': unknown3,
+    'unknown1': _unknown1,
+    'centerX': _centerX,
+    'centerY': _centerY,
+    'bottomLeftX': _bottomLeftX,
+    'bottomLeftY': _bottomLeftY,
+    'topRightX': _topRightX,
+    'topRightY': _topRightY,
+    'unknown2': _unknown2,
+    'unknown3': _unknown3,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is UnknownSegment &&
-    other.unknown1 == unknown1 &&
-    other.centerX == centerX &&
-    other.centerY == centerY &&
-    other.bottomLeftX == bottomLeftX &&
-    other.bottomLeftY == bottomLeftY &&
-    other.topRightX == topRightX &&
-    other.topRightY == topRightY &&
-    other.unknown2 == unknown2 &&
-    other.unknown3 == unknown3;
+    other._unknown1 == _unknown1 &&
+    other._centerX == _centerX &&
+    other._centerY == _centerY &&
+    other._bottomLeftX == _bottomLeftX &&
+    other._bottomLeftY == _bottomLeftY &&
+    other._topRightX == _topRightX &&
+    other._topRightY == _topRightY &&
+    other._unknown2 == _unknown2 &&
+    other._unknown3 == _unknown3;
 
   @override
   int get hashCode => Object.hash(
-    unknown1,
-    centerX,
-    centerY,
-    bottomLeftX,
-    bottomLeftY,
-    topRightX,
-    topRightY,
-    unknown2,
-    unknown3,
+    _unknown1,
+    _centerX,
+    _centerY,
+    _bottomLeftX,
+    _bottomLeftY,
+    _topRightX,
+    _topRightY,
+    _unknown2,
+    _unknown3,
   );
 }
 
 final class LineSegment extends Segment {
   const LineSegment._({
-    required this.layer,
-    required this.x1,
-    required this.y1,
-    required this.x2,
-    required this.y2,
-    required this.scale,
-    required this.traceNetIndex,
-  });
+    required int layer,
+    required int x1,
+    required int y1,
+    required int x2,
+    required int y2,
+    required int scale,
+    required int traceNetIndex,
+  })
+  : _layer = layer,
+    _x1 = x1,
+    _y1 = y1,
+    _x2 = x2,
+    _y2 = y2,
+    _scale = scale,
+    _traceNetIndex = traceNetIndex;
   
-  final int layer;
-  final int x1;
-  final int y1;
-  final int x2;
-  final int y2;
-  final int scale;
-  final int traceNetIndex;
+  final int _layer;
+  final int _x1;
+  final int _y1;
+  final int _x2;
+  final int _y2;
+  final int _scale;
+  final int _traceNetIndex;
 
   static const id = 5;
 
@@ -285,69 +317,77 @@ final class LineSegment extends Segment {
 
   @override
   Bytes toBytes() => [
-    ...layer.toUint32List(),
-    ...x1.toInt32List(),
-    ...y1.toInt32List(),
-    ...x2.toInt32List(),
-    ...y2.toInt32List(),
-    ...scale.toInt32List(),
-    ...traceNetIndex.toUint32List(),
+    ..._layer.toUint32List(),
+    ..._x1.toInt32List(),
+    ..._y1.toInt32List(),
+    ..._x2.toInt32List(),
+    ..._y2.toInt32List(),
+    ..._scale.toInt32List(),
+    ..._traceNetIndex.toUint32List(),
   ];
 
   @override
   JsonMap toJson() => {
-    'layer': layer,
-    'x1': x1,
-    'y1': y1,
-    'x2': x2,
-    'y2': y2,
-    'scale': scale,
-    'traceNetIndex': traceNetIndex,
+    'layer': _layer,
+    'x1': _x1,
+    'y1': _y1,
+    'x2': _x2,
+    'y2': _y2,
+    'scale': _scale,
+    'traceNetIndex': _traceNetIndex,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is LineSegment &&
-    other.layer == layer &&
-    other.x1 == x1 &&
-    other.y1 == y1 &&
-    other.x2 == x2 &&
-    other.y2 == y2 &&
-    other.scale == scale &&
-    other.traceNetIndex == traceNetIndex;
+    other._layer == _layer &&
+    other._x1 == _x1 &&
+    other._y1 == _y1 &&
+    other._x2 == _x2 &&
+    other._y2 == _y2 &&
+    other._scale == _scale &&
+    other._traceNetIndex == _traceNetIndex;
 
   @override
   int get hashCode => Object.hash(
-    layer,
-    x1,
-    y1,
-    x2,
-    y2,
-    scale,
-    traceNetIndex,
+    _layer,
+    _x1,
+    _y1,
+    _x2,
+    _y2,
+    _scale,
+    _traceNetIndex,
   );
 }
 
 final class TextSegment extends Segment {
   const TextSegment._({
-    required this.unknown1,
-    required this.positionX,
-    required this.positionY,
-    required this.size,
-    required this.divider,
-    required this.empty,
-    required this.one,
-    required this.text,
-  });
+    required int unknown1,
+    required int positionX,
+    required int positionY,
+    required int size,
+    required int divider,
+    required int empty,
+    required int one,
+    required String text,
+  })
+  : _unknown1 = unknown1,
+    _positionX = positionX,
+    _positionY = positionY,
+    _size = size,
+    _divider = divider,
+    _empty = empty,
+    _one = one,
+    _text = text;
 
-  final int unknown1;
-  final int positionX;
-  final int positionY;
-  final int size;
-  final int divider;
-  final int empty;
-  final int one;
-  final String text;
+  final int _unknown1;
+  final int _positionX;
+  final int _positionY;
+  final int _size;
+  final int _divider;
+  final int _empty;
+  final int _one;
+  final String _text;
 
   static const id = 6;
 
@@ -356,67 +396,72 @@ final class TextSegment extends Segment {
 
   @override
   Bytes toBytes() => [
-    ...unknown1.toUint32List(),
-    ...positionX.toUint32List(),
-    ...positionY.toUint32List(),
-    ...size.toUint32List(),
-    ...divider.toUint32List(),
-    ...empty.toUint32List(),
-    ...one.toUint16List(),
-    ...text.toStringPacket().toBytes(),
+    ..._unknown1.toUint32List(),
+    ..._positionX.toUint32List(),
+    ..._positionY.toUint32List(),
+    ..._size.toUint32List(),
+    ..._divider.toUint32List(),
+    ..._empty.toUint32List(),
+    ..._one.toUint16List(),
+    ..._text.toStringPacket().toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
-    'unknown1': unknown1,
-    'positionX': positionX,
-    'positionY': positionY,
-    'size': size,
-    'divider': divider,
-    'empty': empty,
-    'one': one,
-    'text': text,
+    'unknown1': _unknown1,
+    'positionX': _positionX,
+    'positionY': _positionY,
+    'size': _size,
+    'divider': _divider,
+    'empty': _empty,
+    'one': _one,
+    'text': _text,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is TextSegment &&
-    other.unknown1 == unknown1 &&
-    other.positionX == positionX &&
-    other.positionY == positionY &&
-    other.size == size &&
-    other.divider == divider &&
-    other.empty == empty &&
-    other.one == one &&
-    other.text == text;
+    other._unknown1 == _unknown1 &&
+    other._positionX == _positionX &&
+    other._positionY == _positionY &&
+    other._size == _size &&
+    other._divider == _divider &&
+    other._empty == _empty &&
+    other._one == _one &&
+    other._text == _text;
 
   @override
   int get hashCode => Object.hash(
-    unknown1,
-    positionX,
-    positionY,
-    size,
-    divider,
-    empty,
-    one,
-    text,
+    _unknown1,
+    _positionX,
+    _positionY,
+    _size,
+    _divider,
+    _empty,
+    _one,
+    _text,
   );
 }
 
 final class ComponentSegment extends Segment {
   const ComponentSegment._({
-    required this.unknown1,
-    required this.description,
-    required this.unknown2,
-    required this.name,
-    required this.components,
-  });
+    required List<int> unknown1,
+    required String description,
+    required List<int> unknown2,
+    required String name,
+    required List<Component> components,
+  })
+  : _unknown1 = unknown1,
+    _description = description,
+    _unknown2 = unknown2,
+    _name = name,
+    _components = components;
 
-  final Bytes unknown1;
-  final String description;
-  final Bytes unknown2;
-  final String name;
-  final List<Component> components;
+  final Bytes _unknown1;
+  final String _description;
+  final Bytes _unknown2;
+  final String _name;
+  final List<Component> _components;
 
   static const int id = 7;
 
@@ -440,11 +485,11 @@ final class ComponentSegment extends Segment {
   @override
   Bytes toBytes() {
     final bytes = [
-      ...unknown1,
-      ...description.toStringPacket().toBytes(),
-      ...unknown2,
-      ...name.toStringPacket().toBytes(),
-      for (final component in components)
+      ..._unknown1,
+      ..._description.toStringPacket().toBytes(),
+      ..._unknown2,
+      ..._name.toStringPacket().toBytes(),
+      for (final component in _components)
       ...component.toComponentPacket().toBytes(),
     ].toBytesable().toLengthPacket().toBytes();
 
@@ -453,11 +498,11 @@ final class ComponentSegment extends Segment {
 
   @override
   JsonMap toJson() => {
-    'unknown1': unknown1,
-    'description': description,
-    'unknown2': unknown2,
-    'name': name,
-    'components': components
+    'unknown1': _unknown1,
+    'description': _description,
+    'unknown2': _unknown2,
+    'name': _name,
+    'components': _components
       .map((e) => e.toComponentPacket().toJson())
       .toList(),
   }.toJsonMap();
@@ -465,155 +510,173 @@ final class ComponentSegment extends Segment {
   @override
   bool operator ==(Object other) =>
     other is ComponentSegment &&
-    listEqual(other.unknown1, unknown1) &&
-    other.description == description &&
-    listEqual(other.unknown2, unknown2) &&
-    other.name == name &&
-    listEqual(other.components, components);
+    listEqual(other._unknown1, _unknown1) &&
+    other._description == _description &&
+    listEqual(other._unknown2, _unknown2) &&
+    other._name == _name &&
+    listEqual(other._components, _components);
 
   @override
   int get hashCode => Object.hash(
-    Object.hashAll(unknown1),
-    description,
-    Object.hashAll(unknown2),
-    name,
-    Object.hashAll(components),
+    Object.hashAll(_unknown1),
+    _description,
+    Object.hashAll(_unknown2),
+    _name,
+    Object.hashAll(_components),
   );
 
 }
 
 final class PadSegment extends Segment {
   const PadSegment._({
-    required this.number,
-    required this.originX,
-    required this.originY,
-    required this.innerDiameter,
-    required this.unknown1,
-    required this.name,
-    required this.outerWidth1,
-    required this.outerHeight1,
-    required this.flag1,
-    required this.outerWidth2,
-    required this.outerHeight2,
-    required this.flag2,
-    required this.outerWidth3,
-    required this.outerHeight3,
-    required this.flag3,
-    required this.unknown2,
-    required this.flag4,
-    required this.netIndex,
-  });
+    required int number,
+    required int originX,
+    required int originY,
+    required int innerDiameter,
+    required int unknown1,
+    required String name,
+    required int outerWidth1,
+    required int outerHeight1,
+    required int flag1,
+    required int outerWidth2,
+    required int outerHeight2,
+    required int flag2,
+    required int outerWidth3,
+    required int outerHeight3,
+    required int flag3,
+    required int unknown2,
+    required int flag4,
+    required int netIndex,
+  })
+  : _number = number,
+    _originX = originX,
+    _originY = originY,
+    _innerDiameter = innerDiameter,
+    _unknown1 = unknown1,
+    _name = name,
+    _outerWidth1 = outerWidth1,
+    _outerHeight1 = outerHeight1,
+    _flag1 = flag1,
+    _outerWidth2 = outerWidth2,
+    _outerHeight2 = outerHeight2,
+    _flag2 = flag2,
+    _outerWidth3 = outerWidth3,
+    _outerHeight3 = outerHeight3,
+    _flag3 = flag3,
+    _unknown2 = unknown2,
+    _flag4 = flag4,
+    _netIndex = netIndex;
 
-  final int number;
-  final int originX;
-  final int originY;
-  final int innerDiameter;
-  final int unknown1;
-  final String name;
-  final int outerWidth1;
-  final int outerHeight1;
-  final int flag1;
-  final int outerWidth2;
-  final int outerHeight2;
-  final int flag2;
-  final int outerWidth3;
-  final int outerHeight3;
-  final int flag3;
-  final int unknown2;
-  final int flag4;
-  final int netIndex;
+  final int _number;
+  final int _originX;
+  final int _originY;
+  final int _innerDiameter;
+  final int _unknown1;
+  final String _name;
+  final int _outerWidth1;
+  final int _outerHeight1;
+  final int _flag1;
+  final int _outerWidth2;
+  final int _outerHeight2;
+  final int _flag2;
+  final int _outerWidth3;
+  final int _outerHeight3;
+  final int _flag3;
+  final int _unknown2;
+  final int _flag4;
+  final int _netIndex;
 
   static const id = 9;
 
   @override
-  int get type => number;
+  int get type => _number;
 
   @override
   Bytes toBytes() => [
-    ...number.toUint32List(),
-    ...originX.toUint32List(),
-    ...originY.toUint32List(),
-    ...innerDiameter.toUint32List(),
-    ...unknown1.toUint32List(),
-    ...name.toStringPacket().toBytes(),
-    ...outerWidth1.toUint32List(),
-    ...outerHeight1.toUint32List(),
-    flag1,
-    ...outerWidth2.toUint32List(),
-    ...outerHeight2.toUint32List(),
-    flag2,
-    ...outerWidth3.toUint32List(),
-    ...outerHeight3.toUint32List(),
-    flag3,
-    ...unknown2.toUint32List(),
-    flag4,
-    ...netIndex.toUint32List(),
+    ..._number.toUint32List(),
+    ..._originX.toUint32List(),
+    ..._originY.toUint32List(),
+    ..._innerDiameter.toUint32List(),
+    ..._unknown1.toUint32List(),
+    ..._name.toStringPacket().toBytes(),
+    ..._outerWidth1.toUint32List(),
+    ..._outerHeight1.toUint32List(),
+    _flag1,
+    ..._outerWidth2.toUint32List(),
+    ..._outerHeight2.toUint32List(),
+    _flag2,
+    ..._outerWidth3.toUint32List(),
+    ..._outerHeight3.toUint32List(),
+    _flag3,
+    ..._unknown2.toUint32List(),
+    _flag4,
+    ..._netIndex.toUint32List(),
   ];
 
   @override
   JsonMap toJson() => {
-    'number': number,
-    'originX': originX,
-    'originY': originY,
-    'innerDiameter': innerDiameter,
-    'unknown1': unknown1,
-    'name': name,
-    'outerWidth1': outerWidth1,
-    'outerHeight1': outerHeight1,
-    'flag1': flag1,
-    'outerWidth2': outerWidth2,
-    'outerHeight2': outerHeight2,
-    'flag2': flag2,
-    'outerWidth3': outerWidth3,
-    'outerHeight3': outerHeight3,
-    'flag3': flag3,
-    'unknown2': unknown2,
-    'flag4': flag4,
-    'netIndex': netIndex,
+    'number': _number,
+    'originX': _originX,
+    'originY': _originY,
+    'innerDiameter': _innerDiameter,
+    'unknown1': _unknown1,
+    'name': _name,
+    'outerWidth1': _outerWidth1,
+    'outerHeight1': _outerHeight1,
+    'flag1': _flag1,
+    'outerWidth2': _outerWidth2,
+    'outerHeight2': _outerHeight2,
+    'flag2': _flag2,
+    'outerWidth3': _outerWidth3,
+    'outerHeight3': _outerHeight3,
+    'flag3': _flag3,
+    'unknown2': _unknown2,
+    'flag4': _flag4,
+    'netIndex': _netIndex,
   }.toJsonMap();
 
   @override
   bool operator ==(Object other) =>
     other is PadSegment &&
-    other.number == number &&
-    other.originX == originX &&
-    other.originY == originY &&
-    other.innerDiameter == innerDiameter &&
-    other.unknown1 == unknown1 &&
-    other.name == name &&
-    other.outerWidth1 == outerWidth1 &&
-    other.outerHeight1 == outerHeight1 &&
-    other.flag1 == flag1 &&
-    other.outerWidth2 == outerWidth2 &&
-    other.outerHeight2 == outerHeight2 &&
-    other.flag2 == flag2 &&
-    other.outerWidth3 == outerWidth3 &&
-    other.outerHeight3 == outerHeight3 &&
-    other.flag3 == flag3 &&
-    other.unknown2 == unknown2 &&
-    other.flag4 == flag4 &&
-    other.netIndex == netIndex;
+    other._number == _number &&
+    other._originX == _originX &&
+    other._originY == _originY &&
+    other._innerDiameter == _innerDiameter &&
+    other._unknown1 == _unknown1 &&
+    other._name == _name &&
+    other._outerWidth1 == _outerWidth1 &&
+    other._outerHeight1 == _outerHeight1 &&
+    other._flag1 == _flag1 &&
+    other._outerWidth2 == _outerWidth2 &&
+    other._outerHeight2 == _outerHeight2 &&
+    other._flag2 == _flag2 &&
+    other._outerWidth3 == _outerWidth3 &&
+    other._outerHeight3 == _outerHeight3 &&
+    other._flag3 == _flag3 &&
+    other._unknown2 == _unknown2 &&
+    other._flag4 == _flag4 &&
+    other._netIndex == _netIndex;
 
   @override
   int get hashCode => Object.hash(
-    number,
-    originX,
-    originY,
-    innerDiameter,
-    unknown1,
-    name,
-    outerWidth1,
-    outerHeight1,
-    flag1,
-    outerWidth2,
-    outerHeight2,
-    flag2,
-    outerWidth3,
-    outerHeight3,
-    flag3,
-    unknown2,
-    flag4,
-    netIndex,
+    _number,
+    _originX,
+    _originY,
+    _innerDiameter,
+    _unknown1,
+    _name,
+    _outerWidth1,
+    _outerHeight1,
+    _flag1,
+    _outerWidth2,
+    _outerHeight2,
+    _flag2,
+    _outerWidth3,
+    _outerHeight3,
+    _flag3,
+    _unknown2,
+    _flag4,
+    _netIndex,
   );
 }
 

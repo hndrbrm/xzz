@@ -15,7 +15,10 @@ final class Resistance implements Bytesable, Jsonable, Textable {
     required String value,
     required String part,
     required String pin,
-  }) : _pin = pin, _part = part, _value = value;
+  })
+  : _value = value,
+    _part = part,
+    _pin = pin;
 
   final String _value;
   final String _part;
