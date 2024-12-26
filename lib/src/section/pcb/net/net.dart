@@ -44,7 +44,7 @@ final class Net implements Bytesable, Jsonable {
   );
 }
 
-extension NetIterator on Iterator<int> {
+extension NetOnIterator on Iterator<int> {
   Net toNet() {
     final length = read(4).toUint32();
 
@@ -55,11 +55,11 @@ extension NetIterator on Iterator<int> {
   }
 }
 
-extension NetJsonMap on JsonMap {
+extension NetOnJsonMap on JsonMap {
   Net toNet() => toObject().toNet();
 }
 
-extension NetMap on Map<String, Object?> {
+extension NetOnMap on Map<String, Object?> {
   Net toNet() => Net._(
     index: this['index']! as int,
     name: this['name']! as String,

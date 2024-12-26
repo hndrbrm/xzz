@@ -49,10 +49,17 @@ extension XzzJsonMap on JsonMap {
 }
 
 extension XzzIterator on Iterator<int> {
-  Xzz toXzz() => Xzz._(
-    pcb: toPcb(),
-    extra: toList().toExtra(),
-  );
+  Xzz toXzz() {
+    final pcb = toPcb();
+
+    final list = toList();
+    final extra = list.isEmpty ? null : list.toExtra();
+
+    return Xzz._(
+      pcb: pcb,
+      extra: extra,
+    );
+  }
 }
 
 extension XzzList on List<int> {

@@ -11,31 +11,35 @@ class Segments extends BytesablePacket<SegmentPacket> {
   const Segments(super.whole);
 
   @override
+  JsonList toJson() => whole
+    .map((e) => e.toJson())
+    .toJsonList();
+
+  @override
   bool operator ==(Object other) =>
     other is Segments &&
     listEqual(other.whole, whole);
 
   @override
   int get hashCode => Object.hashAll(whole);
-
-  @override
-  JsonList toJson() => whole
-    .map((e) => e.toJson())
-    .toJsonList();
 }
 
-extension SegmentsIterator on Iterator<int> {
+extension SegmentsOnIterator on Iterator<int> {
   Segments toSegments() {
     final whole = toByteablePacket((e) => e.toSegmentPacket());
     return Segments(whole.whole);
   }
 }
 
-extension SegmentsJsonList on JsonList {
+extension SegmentsOnJsonList on JsonList {
   Segments toSegments() => toObject().toSegments();
 }
 
-extension SegmentsList on List<Object?> {
+extension SegmentsOnListInt on List<int> {
+  Segments toSegments() => iterator.toSegments();
+}
+
+extension SegmentsOnListObject on List<Object?> {
   Segments toSegments() => Segments(
     map((e) => e! as Map<String, Object?>)
       .map((e) => e.toSegmentPacket())

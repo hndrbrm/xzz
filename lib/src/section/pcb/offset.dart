@@ -65,7 +65,7 @@ final class Offset implements Bytesable, Jsonable {
 
 final class InvalidOffsetException extends FormatException {}
 
-extension OffsetIterator on Iterator<int> {
+extension OffsetOnIterator on Iterator<int> {
   Offset toOffset() => Offset._(
     unknown1: read(21),
     boardOffset: read(4).toUint32(),
@@ -75,11 +75,15 @@ extension OffsetIterator on Iterator<int> {
   );
 }
 
-extension OffsetJsonMap on JsonMap {
+extension OffsetOnList on List<int> {
+  Offset toOffset() => iterator.toOffset();
+}
+
+extension OffsetOnJsonMap on JsonMap {
   Offset toOffset() => toObject().toOffset();
 }
 
-extension OffsetMap on Map<String, Object?> {
+extension OffsetOnMap on Map<String, Object?> {
   Offset toOffset() => Offset._(
     unknown1: (this['unknown1']! as List<Object?>).toBytes(),
     boardOffset: this['boardOffset']! as int,

@@ -4,8 +4,8 @@
 
 import '../../serializable/byteable.dart';
 import '../../serializable/jsonable.dart';
+import 'extra_signature.dart';
 import 'part.dart';
-import 'signature.dart';
 import 'title.dart';
 
 final class Extra implements Bytesable, Jsonable {
@@ -15,7 +15,7 @@ final class Extra implements Bytesable, Jsonable {
     required this.part,
   });
 
-  final Signature signature;
+  final ExtraSignature signature;
   final Title title;
   final Part part;
 
@@ -50,7 +50,7 @@ final class Extra implements Bytesable, Jsonable {
 
 extension ExtraList on List<int> {
   Extra toExtra() {
-    final signature = toSignature();
+    final signature = toExtraSignature();
     final rest = sublist(signature.toBytes().length).iterator;
 
     final title = rest.toTitle();
@@ -71,7 +71,7 @@ extension ExtraMap on Map<String, Object?> {
   Extra toExtra() {
     final signature = (this['signature']! as List<Object?>)
       .toBytes()
-      .toSignature();
+      .toExtraSignature();
 
     final partMap = this['part']! as Map<String, Object?>;
     final part = switch (signature) {

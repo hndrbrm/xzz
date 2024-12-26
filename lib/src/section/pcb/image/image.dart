@@ -67,7 +67,7 @@ final class Image implements Bytesable, Jsonable {
   );
 }
 
-extension ImageIterator on Iterator<int> {
+extension ImageOnIterator on Iterator<int> {
   Image toImage() => Image._(
     id: read(1).first,
     index: read(1).first,
@@ -78,11 +78,11 @@ extension ImageIterator on Iterator<int> {
   );
 }
 
-extension ImageJsonMap on JsonMap {
+extension ImageOnJsonMap on JsonMap {
   Image toImage() => toObject().toImage();
 }
 
-extension ImageMap on Map<String, Object?> {
+extension ImageOnMap on Map<String, Object?> {
   Image toImage() => Image._(
     id: this['id']! as int,
     index: this['index']! as int,

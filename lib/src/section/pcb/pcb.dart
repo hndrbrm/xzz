@@ -8,7 +8,7 @@ import 'image/images.dart';
 import 'net/nets.dart';
 import 'offset.dart';
 import 'segment/segments.dart';
-import 'signature.dart';
+import 'pcb_signature.dart';
 
 final class Pcb implements Bytesable, Jsonable {
   const Pcb._({
@@ -19,7 +19,7 @@ final class Pcb implements Bytesable, Jsonable {
     required this.nets,
   });
 
-  final Signature signature;
+  final PcbSignature signature;
   final Offset offset;
   final Segments segments;
   final Images images;
@@ -62,13 +62,13 @@ final class Pcb implements Bytesable, Jsonable {
   );
 }
 
-extension PcbJsonMap on JsonMap {
+extension PcbOnJsonMap on JsonMap {
   Pcb toPcb() => toObject().toPcb();
 }
 
-extension PcbIterator on Iterator<int> {
+extension PcbOnIterator on Iterator<int> {
   Pcb toPcb() => Pcb._(
-    signature: toSignature(),
+    signature: toPcbSignature(),
     offset: toOffset(),
     segments: toSegments(),
     images: toImages(),
@@ -76,9 +76,13 @@ extension PcbIterator on Iterator<int> {
   );
 }
 
-extension PcbMap on Map<String, Object?> {
+extension PcbOnList on List<int> {
+  Pcb toPcb() => iterator.toPcb();
+}
+
+extension PcbOnMap on Map<String, Object?> {
   Pcb toPcb() => Pcb._(
-    signature: (this['signature']! as Map<String, Object?>).toSignature(),
+    signature: (this['signature']! as Map<String, Object?>).toPcbSignature(),
     offset: (this['offset']! as Map<String, Object?>).toOffset(),
     segments: (this['segments']! as List<Object?>).toSegments(),
     images: (this['images']! as List<Object?>).toImages(),

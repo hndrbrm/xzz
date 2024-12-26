@@ -74,7 +74,7 @@ final class Part2<ResistanceType> extends Part {
   int get hashCode => Object.hashAll(contents);
 }
 
-extension Part1Iterator on Iterator<int> {
+extension PartOnIterator on Iterator<int> {
   Part1 toPart1() {
     final json = toList().toString8();
     final map = jsonDecode(json) as Map<String, Object?>;
@@ -95,11 +95,13 @@ extension Part1Iterator on Iterator<int> {
   }
 }
 
-extension Part1List on List<int> {
+extension PartOnList on List<int> {
   Part1 toPart1() => iterator.toPart1();
+
+  Part2 toPart2() => iterator.toPart2();
 }
 
-extension Part1Map on Map<String, Object?> {
+extension PartOnMap on Map<String, Object?> {
   Part1 toPart1() => Part1(
     (this['part']! as List<Object?>)
       .map((e) => e! as Map<String, Object?>)

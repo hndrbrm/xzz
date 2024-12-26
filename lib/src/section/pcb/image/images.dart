@@ -19,18 +19,22 @@ class Images extends BytesablePacket<Image> {
   int get hashCode => Object.hashAll(whole);
 }
 
-extension ImagesIterator on Iterator<int> {
+extension ImagesOnIterator on Iterator<int> {
   Images toImages() {
     final whole = toByteablePacket((e) => e.toImage());
     return Images(whole.whole);
   }
 }
 
-extension ImagesJsonList on JsonList {
+extension ImagesOnJsonList on JsonList {
   Images toImages() => toObject().toImages();
 }
 
-extension ImagesList on List<Object?> {
+extension ImagesOnListInt on List<int> {
+  Images toImages() => iterator.toImages();
+}
+
+extension ImagesOnListObject on List<Object?> {
   Images toImages() => Images(
     map((e) => e! as Map<String, Object?>)
       .map((e) => e.toJsonMap())

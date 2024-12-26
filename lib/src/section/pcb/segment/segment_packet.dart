@@ -64,7 +64,7 @@ extension SegmentIterator on Iterator<int> {
     );
   }
 
-  BytesablePacket<SegmentPacket> toSegments() => toByteablePacket(
+  BytesablePacket<SegmentPacket> toSegmentPacketBytesable() => toByteablePacket(
     (e) => e.toSegmentPacket()
   );
 }

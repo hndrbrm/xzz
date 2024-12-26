@@ -19,18 +19,22 @@ class Nets extends BytesablePacket<Net> {
   int get hashCode => Object.hashAll(whole);
 }
 
-extension NetsIterator on Iterator<int> {
+extension NetsOnIterator on Iterator<int> {
   Nets toNets() {
     final whole = toByteablePacket((e) => e.toNet());
     return Nets(whole.whole);
   }
 }
 
-extension NetsJsonList on JsonList {
+extension NetsOnJsonList on JsonList {
   Nets toNets() => toObject().toNets();
 }
 
-extension NetsList on List<Object?> {
+extension NetsOnListInt on List<int> {
+  Nets toNets() => iterator.toNets();
+}
+
+extension NetsOnListObject on List<Object?> {
   Nets toNets() => Nets(
     map((e) => e! as Map<String, Object?>)
       .map((e) => e.toJsonMap())
