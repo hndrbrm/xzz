@@ -5,7 +5,7 @@
 import 'text.dart';
 
 class Textable with TextableMixin {
-  const Textable([ this._toText ]);
+  const Textable._([ this._toText ]);
 
   @override
   final Text Function()? _toText;
@@ -20,5 +20,5 @@ mixin TextableMixin {
 }
 
 extension TextableOnString on Text {
-  Textable toTextable() => Textable(() => this);
+  Textable toTextable() => Textable._(() => this);
 }

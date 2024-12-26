@@ -59,8 +59,8 @@ extension ExtraOnBytes on Bytes {
 
     final title = rest.toTitle();
     final part = switch (signature) {
-      Signature1() => rest.toPart1(),
-      Signature2() => rest.toPart2(),
+      ExtraSignature1() => rest.toPart1(),
+      ExtraSignature2() => rest.toPart2(),
     };
 
     return Extra._(
@@ -79,8 +79,8 @@ extension ExtraOnMap on Map<String, Object?> {
 
     final partMap = this['part']! as Map<String, Object?>;
     final part = switch (signature) {
-      Signature1() => partMap.toPart1(),
-      Signature2() => partMap.toPart2(),
+      ExtraSignature1() => partMap.toPart1(),
+      ExtraSignature2() => partMap.toPart2(),
     };
 
     return Extra._(

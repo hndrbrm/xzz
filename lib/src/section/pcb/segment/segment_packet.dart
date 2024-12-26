@@ -23,7 +23,7 @@ final class SegmentPacket extends IdPacket implements Bytesable, Jsonable {
     TextSegment.id => content.toBytes().iterator.toTextSegment(),
     ComponentSegment.id => content.toBytes().toComponentSegment(),
     PadSegment.id => content.toBytes().iterator.toPadSegment(),
-    _ => throw UnknownSegmentException(id),
+    _ => throw UnknownSegmentException._(id),
   };
 
   @override
@@ -46,7 +46,7 @@ final class SegmentPacket extends IdPacket implements Bytesable, Jsonable {
 }
 
 final class UnknownSegmentException implements Exception {
-  const UnknownSegmentException(this._id);
+  const UnknownSegmentException._(this._id);
 
   final int _id;
 
@@ -85,7 +85,7 @@ extension SegmentPacketOnMap on Map<String, Object?> {
       TextSegment.id => segment.toTextSegment(),
       ComponentSegment.id => segment.toComponentSegment(),
       PadSegment.id => segment.toPadSegment(),
-      _ => throw UnknownSegmentException(id),
+      _ => throw UnknownSegmentException._(id),
     };
 
     return SegmentPacket._(

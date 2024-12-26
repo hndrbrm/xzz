@@ -9,7 +9,7 @@ import '../../../packet/id_packet.dart';
 import 'component.dart';
 
 final class ComponentPacket extends IdPacket implements Jsonable {
-  const ComponentPacket({
+  const ComponentPacket._({
     required super.id,
     required super.content,
   });
@@ -51,7 +51,7 @@ final class UnknownComponentException implements Exception {
 }
 
 extension ComponentPacketOnComponent on Component {
-  ComponentPacket toComponentPacket() => ComponentPacket(
+  ComponentPacket toComponentPacket() => ComponentPacket._(
     id: type,
     content: toBytes().toBytesable(),
   );
@@ -61,7 +61,7 @@ extension ComponentPacketOnIterator on Iterator<int> {
   ComponentPacket toComponentPacket() {
     final packet = toIdPacket();
 
-    return ComponentPacket(
+    return ComponentPacket._(
       id: packet.id,
       content: packet.content,
     );

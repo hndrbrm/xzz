@@ -23,14 +23,14 @@ final class Xzz implements Bytesable, Jsonable {
   Bytes toBytes() => [
     ..._pcb.toBytes(),
     if (_extra != null)
-    ..._extra!.toBytes(),
+    ..._extra.toBytes(),
   ];
 
   @override
   JsonMap toJson() => {
     'pcb': _pcb.toJson(),
     if (_extra != null)
-    'extra': _extra!.toJson(),
+    'extra': _extra.toJson(),
   }.toJsonMap();
 
   @override

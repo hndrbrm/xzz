@@ -27,24 +27,24 @@ sealed class ExtraSignature implements Bytesable, Jsonable {
   int get hashCode => _id.hashCode;
 }
 
-final class Signature1 extends ExtraSignature {
-  const Signature1(super._id);
+final class ExtraSignature1 extends ExtraSignature {
+  const ExtraSignature1(super._id);
 
   @override
   bool operator ==(Object other) =>
-    other is Signature1 &&
+    other is ExtraSignature1 &&
     other._id == _id;
 
   @override
   int get hashCode => _id.hashCode;
 }
 
-final class Signature2 extends ExtraSignature {
-  const Signature2(super._id);
+final class ExtraSignature2 extends ExtraSignature {
+  const ExtraSignature2(super._id);
 
   @override
   bool operator ==(Object other) =>
-    other is Signature2 &&
+    other is ExtraSignature2 &&
     other._id == _id;
 
   @override
@@ -67,9 +67,9 @@ extension ExtraSignatureOnBytes on Bytes {
 
     if (id.toString8() == _marker) {
       if (this.length > length && this[length] == 0x0a) {
-        return Signature1([ ...id, 0x0a ]);
+        return ExtraSignature1([ ...id, 0x0a ]);
       } else {
-        return Signature2(id);
+        return ExtraSignature2(id);
       }
     }
 
