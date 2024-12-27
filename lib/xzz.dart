@@ -16,4 +16,5 @@ export 'src/section/pcb/pcb.dart';
 export 'src/section/pcb/pcb_signature.dart';
 export 'src/section/pcb/segment/segments.dart';
 export 'src/serializable/bytes.dart';
+export 'src/serializable/jsonable.dart';
 export 'src/xzz.dart';

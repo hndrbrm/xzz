@@ -19,64 +19,114 @@ void main() {
   });
 
   test('PcbSignature', () {
-    final signature = noExtra.pcbSignature.toPcbSignature();
-    expect(signature.toBytes(), equals(noExtra.pcbSignature));
+    final signatureA = noExtra.pcbSignature.toPcbSignature();
+    expect(signatureA.toBytes(), equals(noExtra.pcbSignature));
 
-    print(signature.toJson().toObject());
+    final object = signatureA.toJson().toObject();
+    final signatureB = object.toJsonMap().toPcbSignature();
+    expect(signatureB, equals(signatureA));
   });
 
   test('Offset', () {
-    final offset = noExtra.offset.toOffset();
-    expect(offset.toBytes(), equals(noExtra.offset));
+    final offsetA = noExtra.offset.toOffset();
+    expect(offsetA.toBytes(), equals(noExtra.offset));
+
+    final object = offsetA.toJson().toObject();
+    final offsetB = object.toJsonMap().toOffset();
+    expect(offsetB, equals(offsetA));
   });
 
   test('Segments', () {
-    final segments = noExtra.segments.toSegments();
-    expect(segments.toBytes(), equals(noExtra.segments));
+    final segmentsA = noExtra.segments.toSegments();
+    expect(segmentsA.toBytes(), equals(noExtra.segments));
+
+    final object = segmentsA.toJson().toObject();
+    final segmentsB = object.toJsonList().toSegments();
+    expect(segmentsB, equals(segmentsA));
   });
 
   test('Images', () {
-    final images = noExtra.images.toImages();
-    expect(images.toBytes(), equals(noExtra.images));
+    final imagesA = noExtra.images.toImages();
+    expect(imagesA.toBytes(), equals(noExtra.images));
+
+    final object = imagesA.toJson().toObject();
+    final imagesB = object.toJsonList().toImages();
+    expect(imagesB, equals(imagesA));
   });
 
   test('Nets', () {
-    final nets = noExtra.nets.toNets();
-    expect(nets.toBytes(), equals(noExtra.nets));
+    final netsA = noExtra.nets.toNets();
+    expect(netsA.toBytes(), equals(noExtra.nets));
+
+    final object = netsA.toJson().toObject();
+    final netsB = object.toJsonList().toNets();
+    expect(netsB, equals(netsA));
   });
 
   test('Pcb', () {
-    final pcb = noExtra.pcb.toPcb();
-    expect(pcb.toBytes(), equals(noExtra.pcb));
+    final pcbA = noExtra.pcb.toPcb();
+    expect(pcbA.toBytes(), equals(noExtra.pcb));
+
+    final object = pcbA.toJson().toObject();
+    final pcbB = object.toJsonMap().toPcb();
+    expect(pcbB, equals(pcbA));
   });
 
   test('ExtraSignature', () {
-    final signature1 = withExtra1.extraSignature!.toExtraSignature();
-    expect(signature1.toBytes(), equals(withExtra1.extraSignature));
+    final signature1A = withExtra1.extraSignature!.toExtraSignature();
+    expect(signature1A.toBytes(), equals(withExtra1.extraSignature));
 
-    final signature2 = withExtra2.extraSignature!.toExtraSignature();
-    expect(signature2.toBytes(), equals(withExtra2.extraSignature));
+    final object1 = signature1A.toJson().toObject();
+    final signature1B = object1.toJsonList().toExtraSignature();
+    expect(signature1B, equals(signature1A));
+
+    final signature2A = withExtra2.extraSignature!.toExtraSignature();
+    expect(signature2A.toBytes(), equals(withExtra2.extraSignature));
+
+    final object2 = signature2A.toJson().toObject();
+    final signature2B = object2.toJsonList().toExtraSignature();
+    expect(signature2B, equals(signature2A));
   });
 
   test('Title', () {
-    final title = withExtra1.title!.toTitle();
-    expect(title.toBytes(), equals(withExtra1.title));
+    final titleA = withExtra1.title!.toTitle();
+    expect(titleA.toBytes(), equals(withExtra1.title));
+
+    final object = titleA.toJson().toObject();
+    final titleB = object.toJsonList().toTitle();
+    expect(titleB, equals(titleA));
   });
 
   test('Part', () {
-    final part1 = withExtra1.part!.toPart1();
-    expect(part1.toBytes(), equals(withExtra1.part));
+    final part1A = withExtra1.part!.toPart1();
+    expect(part1A.toBytes(), equals(withExtra1.part));
 
-    final part2 = withExtra2.part!.toPart2();
-    expect(part2.toBytes(), equals(withExtra2.part));
+    final object1 = part1A.toJson().toObject();
+    final part1B = object1.toJsonMap().toPart1();
+    expect(part1B, equals(part1A));
+
+    final part2A = withExtra2.part!.toPart2();
+    expect(part2A.toBytes(), equals(withExtra2.part));
+
+    final object2 = part2A.toJson().toObject();
+    final part2B = object2.toJsonMap().toPart2();
+    expect(part2B, equals(part2A));
   });
 
   test('Extra', () {
-    final extra1 = withExtra1.extra?.toExtra();
-    expect(extra1?.toBytes(), equals(withExtra1.extra));
+    final extra1A = withExtra1.extra!.toExtra();
+    expect(extra1A.toBytes(), equals(withExtra1.extra));
 
-    final extra2 = withExtra2.extra?.toExtra();
-    expect(extra2?.toBytes(), equals(withExtra2.extra));
+    final object1 = extra1A.toJson().toObject();
+    final extra1B = object1.toJsonMap().toExtra();
+    expect(extra1B, equals(extra1A));
+
+    final extra2A = withExtra2.extra!.toExtra();
+    expect(extra2A.toBytes(), equals(withExtra2.extra));
+
+    final object2 = extra2A.toJson().toObject();
+    final extra2B = object2.toJsonMap().toExtra();
+    expect(extra2B, equals(extra2A));
   });
 
   test('Xzz', () {
@@ -157,7 +207,7 @@ final class PcbBytes {
   final Bytes? title;
   final Bytes? part;
 
-  Bytes get pcb => <int>[
+  Bytes get pcb => [
     ...pcbSignature,
     ...offset,
     ...segments,
@@ -171,14 +221,14 @@ final class PcbBytes {
     part != null;
 
   Bytes? get extra => hasExtra
-    ? <int>[
+    ? [
       ...extraSignature!,
       ...title!,
       ...part!,
     ]
     : null;
 
-  Bytes get xzz => <int>[
+  Bytes get xzz => [
     ...pcb,
     if (hasExtra)
     ...extra!,

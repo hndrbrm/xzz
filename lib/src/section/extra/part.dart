@@ -8,6 +8,7 @@ import '../../bytes_helper/list_helper.dart';
 import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
+import '../../serializable/text.dart';
 import 'content.dart';
 import 'resistance_type.dart';
 import 'text_type.dart';
@@ -53,7 +54,7 @@ final class Part2<ResistanceType> extends Part {
   const Part2(super._contents);
 
   @override
-  Bytes toBytes() => <int>[
+  Bytes toBytes() => [
     for (final content in _contents)
     ...content.toBytes(),
   ];
@@ -83,7 +84,7 @@ extension PartOnBytes on Bytes {
 
 extension PartOnIterator on Iterator<int> {
   Part1 toPart1() {
-    final json = toBytes().toString8();
+    final json = toBytes().toText();
     final map = jsonDecode(json) as Map<String, Object?>;
 
     return map.toPart1();
@@ -100,6 +101,11 @@ extension PartOnIterator on Iterator<int> {
       }
     }
   }
+}
+
+extension PartOnJsonMap on JsonMap {
+  Part1 toPart1() => toObject().toPart1();
+  Part2 toPart2() => toObject().toPart2();
 }
 
 extension PartOnMap on Map<String, Object?> {

@@ -71,6 +71,10 @@ extension ExtraOnBytes on Bytes {
   }
 }
 
+extension ExtraOnJsonMap on JsonMap {
+  Extra toExtra() => toObject().toExtra();
+}
+
 extension ExtraOnMap on Map<String, Object?> {
   Extra toExtra() {
     final signature = (this['signature']! as List<Object?>)

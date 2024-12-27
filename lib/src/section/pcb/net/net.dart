@@ -7,6 +7,7 @@ import '../../../bytes_helper/list_helper.dart';
 import '../../../serializable/bytes.dart';
 import '../../../serializable/bytesable.dart';
 import '../../../serializable/jsonable.dart';
+import '../../../serializable/text.dart';
 
 final class Net implements Bytesable, Jsonable {
   const Net._({
@@ -51,7 +52,7 @@ extension NetOnIterator on Iterator<int> {
 
     return Net._(
       index: read(4).toUint32(),
-      name: read(length - 8).toString8(),
+      name: read(length - 8).toText(),
     );
   }
 }

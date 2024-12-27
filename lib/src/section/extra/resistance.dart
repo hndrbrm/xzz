@@ -72,7 +72,7 @@ extension ResistanceOnResistanceType on ResistanceType {
     assert(start >= 0);
 
     final part = partPin.substring(0, start);
-    final pin = partPin.substring(start, partPin.length - 1);
+    final pin = partPin.substring(start + 1, partPin.length - 1);
     assert(partPin[partPin.length - 1] == ')');
 
     return Resistance._(

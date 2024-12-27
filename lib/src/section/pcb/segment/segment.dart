@@ -484,7 +484,7 @@ final class ComponentSegment extends Segment {
 
   @override
   Bytes toBytes() {
-    final bytes = [
+    final bytes = <int>[
       ..._unknown1,
       ..._description.toStringPacket().toBytes(),
       ..._unknown2,

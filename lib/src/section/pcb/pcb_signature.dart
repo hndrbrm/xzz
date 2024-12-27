@@ -2,10 +2,10 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/list_helper.dart';
 import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
+import '../../serializable/text.dart';
 
 final class PcbSignature implements Bytesable, Jsonable {
   const PcbSignature._(this._id);
@@ -37,7 +37,7 @@ extension PcbSignatureOnIterator on Iterator<int> {
   static const String _id = 'XZZPCB V1.0';
 
   PcbSignature toPcbSignature() {
-    final id = read(11).toString8();
+    final id = read(11).toText();
 
     if (id != _id) {
       throw InvalidPcbSignatureException();

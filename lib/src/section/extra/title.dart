@@ -34,3 +34,7 @@ extension TitleOnBytes on Bytes {
 extension TitleOnIterator on Iterator<int> {
   Title toTitle() => Title._(toTextType());
 }
+
+extension TitleOnJsonList on JsonList {
+  Title toTitle() => toObject().toBytes().toTitle();
+}

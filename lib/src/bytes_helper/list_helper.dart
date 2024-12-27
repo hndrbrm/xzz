@@ -2,8 +2,6 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import 'package:fast_gbk/fast_gbk.dart';
-
 extension ListExtension on List<int> {
   String toHex() {
     final buffer = StringBuffer();
@@ -18,8 +16,6 @@ extension ListExtension on List<int> {
     final value = toUint32();
     return value & 0x80000000 == 0 ? value : value - 0x100000000;
   }
-
-  String toString8() => gbk.decode(this);
 
   int toUint16() {
     assert(length >= 2);

@@ -6,6 +6,7 @@ import '../../bytes_helper/list_helper.dart';
 import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
+import '../../serializable/text.dart';
 
 sealed class ExtraSignature implements Bytesable, Jsonable {
   const ExtraSignature(this._id);
@@ -33,7 +34,7 @@ final class ExtraSignature1 extends ExtraSignature {
   @override
   bool operator ==(Object other) =>
     other is ExtraSignature1 &&
-    other._id == _id;
+    listEqual(other._id, _id);
 
   @override
   int get hashCode => _id.hashCode;
@@ -45,7 +46,7 @@ final class ExtraSignature2 extends ExtraSignature {
   @override
   bool operator ==(Object other) =>
     other is ExtraSignature2 &&
-    other._id == _id;
+    listEqual(other._id, _id);
 
   @override
   int get hashCode => _id.hashCode;
@@ -65,7 +66,7 @@ extension ExtraSignatureOnBytes on Bytes {
     const length = _marker.length;
     final id = sublist(0, length);
 
-    if (id.toString8() == _marker) {
+    if (id.toText() == _marker) {
       if (this.length > length && this[length] == 0x0a) {
         return ExtraSignature1([ ...id, 0x0a ]);
       } else {
@@ -93,5 +94,12 @@ extension ExtraSignatureOnBytes on Bytes {
     }
 
     return -1;
+  }
+}
+
+extension ExtraSignatureOnJsonList on JsonList {
+  ExtraSignature toExtraSignature() {
+    final id = toObject().toBytes();
+    return id.last == 0x0a ? ExtraSignature1(id) : ExtraSignature2(id);
   }
 }

@@ -2,16 +2,16 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/list_helper.dart';
 import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
 import '../../serializable/jsonable.dart';
+import '../../serializable/text.dart';
 import 'length_packet.dart';
 
 class StringPacket extends LengthPacket implements Jsonable {
   const StringPacket(super.content);
 
-  String get string => content.toBytes().toString8();
+  String get string => content.toBytes().toText();
 
   @override
   JsonMap toJson() => { 'string': string }.toJsonMap();

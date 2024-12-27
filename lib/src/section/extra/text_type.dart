@@ -2,9 +2,9 @@
 // All rights reserved. Use of this source code is governed
 // by a BSD-style license that can be found in the LICENSE file.
 
-import '../../bytes_helper/list_helper.dart';
 import '../../serializable/bytes.dart';
 import '../../serializable/bytesable.dart';
+import '../../serializable/text.dart';
 
 class TextType implements Bytesable {
   const TextType(this.content);
@@ -14,7 +14,7 @@ class TextType implements Bytesable {
   int get length => content.length + 1;
 
   @override
-  Bytes toBytes() => <int>[
+  Bytes toBytes() => [
     ...content.toBytes(),
     0x0a,
   ];
@@ -51,7 +51,7 @@ extension TextTypeOnIterator on Iterator<int> {
       result.add(each);
     }
 
-    return TextType(result.toString8());
+    return TextType(result.toText());
   }
 }
 
